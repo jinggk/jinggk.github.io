@@ -1,0 +1,42 @@
+---
+layout: post
+title:  "这是我自己的一篇文章"
+date:   2017-09-07 22:50:39 +0800
+categories: jekyll update
+---
+
+### 1.css盒模型
+#### 本质上css的盒模型就是指一个盒子，它用来包装html的内容，它包括：边距，边框，填充 和 实际内容，正常情况下元素的width代表的是实际的内容的宽度，而这里需要注意的是ie5.x 和ie6下的怪异模式，它的width指的是内容，内边距和边框的总和
+### 2.box-sizing的应用场景
+#### 想理解它的应用场景，首先我觉得我们需要先理解它的作用是什么，box-sizing的值一共有三种，其中第三个inherit不需要关心，他的意思只是说需要从父元素继承而已，所以需要重点关注的就2个：content-box,border-box 我们只要从字面意思去理解就行了，一个是内容盒子，一个是边框盒子，其实就是说当我们算高度的时候，是以谁为中心来算的：
+#####  &nbsp;&nbsp;&nbsp;&nbsp;(1) content-box:浏览器的默认行为，当你设置一个div的width的时候，实际上设置的是div内容的width，边框border和边距padding是另外算的，跟你设置的width没有任何关系
+#####  &nbsp;&nbsp;&nbsp;&nbsp;(2) border-box:当你设置一个div的width的时候，实际上设置的是div内容的widtd+边框border的width+边距padding，即 width/height=border+pading+content
+#### 仔细点就不难发现，这特么不就是让你可以手动设置成ie的怪异模式么？？？？？
+### 3.说一下你了解的弹性FLEX布局
+#### 这个问题，讲道理的说内容涉及的比较多，给大家一个链接做参考：阮老师的[Flex 布局教程：语法篇](http://www.ruanyifeng.com/blog/2015/07/flex-grammar.html)，想详细了解的同学请自己去研究，这里我想说需要注意的2点，第一就是flex的子元素不能使用浮动和垂直居中，第二flex布局对移动端比较友好(android浏览器4.4之前对于flex布局支持不好)
+### 4.关于未知元素的宽高居中问题：
+#### (1)设置父元素为table，子元素为table-cell，利用vertical-align:middle;text-align:center;来实现对齐；（ie8以下是不兼容的，不过阿里都放弃ie8了，你还担心什么）
+#### (2) 使用一个空标签，设置它为inline-block，宽度为0，高度百分百，vertical-align为middle，这样就能把居中线设置为span的中间，从而使得子元素居中
+#### (3) 子元素绝对定位，距离顶部 50%，左边50%，然后使用css3 transform:translate(-50%; -50%)
+#### (4) flex布局
+### 5.说一下原型链，对象，构造函数之间的一些联系。
+#### 自己总结了一份，详情请戳[这里](https://github.com/jinggk/object-prototype/blob/master/%E6%B5%85%E8%B0%88JavaScript%E4%B8%AD%E7%9A%84%E9%9D%A2%E5%AF%B9%E5%AF%B9%E8%B1%A1%E7%BC%96%E7%A8%8B.pdf)
+### 6.DOM事件的绑定的几种方式
+#### 这个就so easy了吧，html中绑定，例如onClick=XXX表达式，js中绑定，获取到DOM元素后.onClick=XXX表达式，最后还有就是addEventListener()的方式，在说说最后这个涉及到的事件循环，其实你就记住事件永远都是先从外面进去，再从里面出来，画一个圆，从上面的进去就是事件捕获，从里面的出来就是事件冒泡，就这么简单，所以addEventlistener()的最后一个参数就可以设置你是想在捕获阶段做处理，还是冒泡阶段做处理，就这样，详细的东西度娘就能找到。
+### 7.js中instanceOf 和 typeOf 得区别
+### 8 call,apply,bind
+#### call 第一个参数是要显示绑定得对象，第二个是调用方法需要得参数列表，跟bind传参一样，但是bind会创建新的函数，并不会马上调用，除非你显示得调用它，call会直接调用，apply跟call一样，只是调用函数，处理参数不同，传入得是参数得数组，他们都是可以改变函数运行时的上下文的
+### 9 深拷贝 浅拷贝 
+### 10 currentTarget  和  target 
+#### target触发事件的元素  currentTarget 绑定事件的元素
+#### 比如：父元素绑定了一个点击事件，但是首先点击的是子元素，事件冒泡到父元素上，触发了父元素绑定的事件，这时候，父元素是绑定事件者就是currentTarget，子元素是触发事件者就是target。
+### 11 经典的http状态码，以及含义
+#### 200：成功响应请求；
+#### 300：被请求的文档存在于多个地方，如果服务器有首选，在header中设置首选项；
+#### 301：文档被重定向了。同时直接转向新的url；
+#### 302：浏览器自动连接到header中给的新的url地址，可以response.sendRedirec；
+#### 304：缓存，header中提供一个If-Modified-Since的信息，浏览器根据信息的内容判断是否需要重新从服务器读取文件，还是直接使用缓存中的数据；
+#### 400：客户端请求中语法错误；
+#### 403：forbidden，禁止的请求，一般是服务器上的文件受损，或者没有授权会引起，比如跨域问题的结果就是403；
+#### 404：表示客户端给的地址无法获取到任何资源；
+#### 500：服务器内部错误；
