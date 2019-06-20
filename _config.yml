@@ -5,10 +5,10 @@
 # Site
 title: Guokai Blog
 subtitle: shanbay frontend engineer
-description: a blog
-keywords: blog javascript
-author: Jing Guokai
-language:
+description: 个人博客
+keywords: 博客 javascript
+author: Guokai
+language: zh-Hans
 timezone: Asia/Shanghai
 
 # URL

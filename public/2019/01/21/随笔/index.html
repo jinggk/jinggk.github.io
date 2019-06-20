@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="成长,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="1.写好代码的前提是想清楚自己的计划2.不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写3.不要滥用注释，但是要用好注释4.注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码5.基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有">
+<meta name="keywords" content="成长">
+<meta property="og:type" content="article">
+<meta property="og:title" content="随笔">
+<meta property="og:url" content="https://jinggk.github.io/2019/01/21/随笔/index.html">
+<meta property="og:site_name" content="Guokai Blog">
+<meta property="og:description" content="1.写好代码的前提是想清楚自己的计划2.不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写3.不要滥用注释，但是要用好注释4.注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码5.基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-20T03:04:30.744Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="随笔">
+<meta name="twitter:description" content="1.写好代码的前提是想清楚自己的计划2.不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写3.不要滥用注释，但是要用好注释4.注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码5.基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jinggk.github.io/2019/01/21/随笔/">
+
+
+
+
+
+  <title>随笔 | Guokai Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Guokai Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">shanbay frontend engineer</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2019/01/21/随笔/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jing Guokai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guokai Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">随笔</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-21T11:03:41+08:00">
+                2019-01-21
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h5 id="1-写好代码的前提是想清楚自己的计划"><a href="#1-写好代码的前提是想清楚自己的计划" class="headerlink" title="1.写好代码的前提是想清楚自己的计划"></a>1.写好代码的前提是想清楚自己的计划</h5><h5 id="2-不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写"><a href="#2-不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写" class="headerlink" title="2.不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写"></a>2.不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写</h5><h5 id="3-不要滥用注释，但是要用好注释"><a href="#3-不要滥用注释，但是要用好注释" class="headerlink" title="3.不要滥用注释，但是要用好注释"></a>3.不要滥用注释，但是要用好注释</h5><h5 id="4-注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码"><a href="#4-注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码" class="headerlink" title="4.注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码"></a>4.注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码</h5><h5 id="5-基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有人在，3年是个分水岭，如果你这个时候不行，基本上很少有人会肯定你的之后"><a href="#5-基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有人在，3年是个分水岭，如果你这个时候不行，基本上很少有人会肯定你的之后" class="headerlink" title="5.基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有人在，3年是个分水岭，如果你这个时候不行，基本上很少有人会肯定你的之后"></a>5.基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有人在，3年是个分水岭，如果你这个时候不行，基本上很少有人会肯定你的之后</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">[<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>].map(<span class="built_in">parseInt</span>) <span class="comment">//?</span></span><br></pre></td></tr></table></figure>
+
+<h5 id="6-前端东西多，内容杂，所以不妨省下地铁上看那些乱七八糟的时间去看看一些技术的文档，每天看看，找时间试试，慢慢的就会质变"><a href="#6-前端东西多，内容杂，所以不妨省下地铁上看那些乱七八糟的时间去看看一些技术的文档，每天看看，找时间试试，慢慢的就会质变" class="headerlink" title="6.前端东西多，内容杂，所以不妨省下地铁上看那些乱七八糟的时间去看看一些技术的文档，每天看看，找时间试试，慢慢的就会质变"></a>6.前端东西多，内容杂，所以不妨省下地铁上看那些乱七八糟的时间去看看一些技术的文档，每天看看，找时间试试，慢慢的就会质变</h5><h5 id="7-面试永远不要说你在上家公司的时候学不到东西，没有氛围，如果你有能力，为什么你不带带节奏，最次你要有点自己的东西能够证明你自己"><a href="#7-面试永远不要说你在上家公司的时候学不到东西，没有氛围，如果你有能力，为什么你不带带节奏，最次你要有点自己的东西能够证明你自己" class="headerlink" title="7.面试永远不要说你在上家公司的时候学不到东西，没有氛围，如果你有能力，为什么你不带带节奏，最次你要有点自己的东西能够证明你自己"></a>7.面试永远不要说你在上家公司的时候学不到东西，没有氛围，如果你有能力，为什么你不带带节奏，最次你要有点自己的东西能够证明你自己</h5><h5 id="8-如果你在比较开放的公司，有什么想法就大胆的说大胆的做，不要畏手畏脚，前提是想好你这个东西带来的效益以及拿出你的方案-公司很重要"><a href="#8-如果你在比较开放的公司，有什么想法就大胆的说大胆的做，不要畏手畏脚，前提是想好你这个东西带来的效益以及拿出你的方案-公司很重要" class="headerlink" title="8.如果你在比较开放的公司，有什么想法就大胆的说大胆的做，不要畏手畏脚，前提是想好你这个东西带来的效益以及拿出你的方案(公司很重要)"></a>8.如果你在比较开放的公司，有什么想法就大胆的说大胆的做，不要畏手畏脚，前提是想好你这个东西带来的效益以及拿出你的方案(公司很重要)</h5><h5 id="9-做人永远比做事重要，虽然是程序猿，怎么样和产品友好的相处，怎么样和领导相处都很重要，如果你连人都做不好，你的领导是不会看重你的能力的，因为团队比你一个人重要性更大"><a href="#9-做人永远比做事重要，虽然是程序猿，怎么样和产品友好的相处，怎么样和领导相处都很重要，如果你连人都做不好，你的领导是不会看重你的能力的，因为团队比你一个人重要性更大" class="headerlink" title="9.做人永远比做事重要，虽然是程序猿，怎么样和产品友好的相处，怎么样和领导相处都很重要，如果你连人都做不好，你的领导是不会看重你的能力的，因为团队比你一个人重要性更大"></a>9.做人永远比做事重要，虽然是程序猿，怎么样和产品友好的相处，怎么样和领导相处都很重要，如果你连人都做不好，你的领导是不会看重你的能力的，因为团队比你一个人重要性更大</h5><h5 id="10-多关注走势，跟得上潮流，但是不要盲目的焦虑，软件界的东西虽然很多但是很多理念都是互通的，要能够举一反三"><a href="#10-多关注走势，跟得上潮流，但是不要盲目的焦虑，软件界的东西虽然很多但是很多理念都是互通的，要能够举一反三" class="headerlink" title="10.多关注走势，跟得上潮流，但是不要盲目的焦虑，软件界的东西虽然很多但是很多理念都是互通的，要能够举一反三"></a>10.多关注走势，跟得上潮流，但是不要盲目的焦虑，软件界的东西虽然很多但是很多理念都是互通的，要能够举一反三</h5><h5 id="11-实战促进技术，能把看到的用到工作中才是能力"><a href="#11-实战促进技术，能把看到的用到工作中才是能力" class="headerlink" title="11.实战促进技术，能把看到的用到工作中才是能力"></a>11.实战促进技术，能把看到的用到工作中才是能力</h5>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/成长/" rel="tag"># 成长</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/15/关于tcp/" rel="next" title="浅谈tcp">
+                <i class="fa fa-chevron-left"></i> 浅谈tcp
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/03/05/手写async函数/" rel="prev" title="手写async函数">
+                手写async函数 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Jing Guokai">
+          <p class="site-author-name" itemprop="name">Jing Guokai</p>
+           
+              <p class="site-description motion-element" itemprop="description">a blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-写好代码的前提是想清楚自己的计划"><span class="nav-number">1.</span> <span class="nav-text">1.写好代码的前提是想清楚自己的计划</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写"><span class="nav-number">2.</span> <span class="nav-text">2.不要急着写代码，先把流程理清楚，花2天想清楚，花一天就能写好代码，上来就写上2天代码，回头重构不一定能搞定，说不好就得重写</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-不要滥用注释，但是要用好注释"><span class="nav-number">3.</span> <span class="nav-text">3.不要滥用注释，但是要用好注释</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#4-注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码"><span class="nav-number">4.</span> <span class="nav-text">4.注释过多说明代码的可读性差，但是关键的地方还是需要加注释的，不要让2天后的自己看不懂2天前的代码</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#5-基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有人在，3年是个分水岭，如果你这个时候不行，基本上很少有人会肯定你的之后"><span class="nav-number">5.</span> <span class="nav-text">5.基础很重要，前端门槛低，入门简单上升难，很多人平时不积累，到面试的时候临时抱佛脚，这种的3年之外的大有人在，3年是个分水岭，如果你这个时候不行，基本上很少有人会肯定你的之后</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#6-前端东西多，内容杂，所以不妨省下地铁上看那些乱七八糟的时间去看看一些技术的文档，每天看看，找时间试试，慢慢的就会质变"><span class="nav-number">6.</span> <span class="nav-text">6.前端东西多，内容杂，所以不妨省下地铁上看那些乱七八糟的时间去看看一些技术的文档，每天看看，找时间试试，慢慢的就会质变</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#7-面试永远不要说你在上家公司的时候学不到东西，没有氛围，如果你有能力，为什么你不带带节奏，最次你要有点自己的东西能够证明你自己"><span class="nav-number">7.</span> <span class="nav-text">7.面试永远不要说你在上家公司的时候学不到东西，没有氛围，如果你有能力，为什么你不带带节奏，最次你要有点自己的东西能够证明你自己</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#8-如果你在比较开放的公司，有什么想法就大胆的说大胆的做，不要畏手畏脚，前提是想好你这个东西带来的效益以及拿出你的方案-公司很重要"><span class="nav-number">8.</span> <span class="nav-text">8.如果你在比较开放的公司，有什么想法就大胆的说大胆的做，不要畏手畏脚，前提是想好你这个东西带来的效益以及拿出你的方案(公司很重要)</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#9-做人永远比做事重要，虽然是程序猿，怎么样和产品友好的相处，怎么样和领导相处都很重要，如果你连人都做不好，你的领导是不会看重你的能力的，因为团队比你一个人重要性更大"><span class="nav-number">9.</span> <span class="nav-text">9.做人永远比做事重要，虽然是程序猿，怎么样和产品友好的相处，怎么样和领导相处都很重要，如果你连人都做不好，你的领导是不会看重你的能力的，因为团队比你一个人重要性更大</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#10-多关注走势，跟得上潮流，但是不要盲目的焦虑，软件界的东西虽然很多但是很多理念都是互通的，要能够举一反三"><span class="nav-number">10.</span> <span class="nav-text">10.多关注走势，跟得上潮流，但是不要盲目的焦虑，软件界的东西虽然很多但是很多理念都是互通的，要能够举一反三</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#11-实战促进技术，能把看到的用到工作中才是能力"><span class="nav-number">11.</span> <span class="nav-text">11.实战促进技术，能把看到的用到工作中才是能力</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jing Guokai</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
