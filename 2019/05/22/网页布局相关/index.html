@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next muse use-motion" lang>
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -95,13 +95,13 @@
 
 
 <meta name="description" content="分辨率 屏幕分辨率 指的是屏幕由多少个像素点构成的，比如 375 * 667 就是说有375 * 667个像素点组成 图像分辨率 指的是一张图片由多少个像素点构成，表示图片分别在垂直和水平上所具有的像素点数，当然对于同一大小尺寸的图片，像素点越多，分辨率越高，图片越清晰 PPI(Pixel Per Inch)：每英寸包括的像素数 这个数字越大，说明同一尺寸的像素点越多，当然越清晰了 DPI(Dot">
-<meta name="keywords" content="blog javascript">
+<meta name="keywords" content="博客 javascript">
 <meta property="og:type" content="article">
 <meta property="og:title" content="网页布局相关">
 <meta property="og:url" content="https://jinggk.github.io/2019/05/22/网页布局相关/index.html">
 <meta property="og:site_name" content="Guokai Blog">
 <meta property="og:description" content="分辨率 屏幕分辨率 指的是屏幕由多少个像素点构成的，比如 375 * 667 就是说有375 * 667个像素点组成 图像分辨率 指的是一张图片由多少个像素点构成，表示图片分别在垂直和水平上所具有的像素点数，当然对于同一大小尺寸的图片，像素点越多，分辨率越高，图片越清晰 PPI(Pixel Per Inch)：每英寸包括的像素数 这个数字越大，说明同一尺寸的像素点越多，当然越清晰了 DPI(Dot">
-<meta property="og:locale" content="default">
+<meta property="og:locale" content="zh-Hans">
 <meta property="og:updated_time" content="2019-06-20T03:08:54.963Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="网页布局相关">
@@ -113,14 +113,14 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Muse',
+    scheme: 'Mist',
     sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
     tabs: true,
     motion: true,
     duoshuo: {
       userId: '0',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -158,7 +158,7 @@
 
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
   
@@ -206,7 +206,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
-            Home
+            首页
           </a>
         </li>
       
@@ -216,17 +216,17 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
             
-            Archives
+            归档
           </a>
         </li>
       
         
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
             
-            Tags
+            关于我
           </a>
         </li>
       
@@ -266,9 +266,9 @@
     <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2019/05/22/网页布局相关/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jing Guokai">
+      <meta itemprop="name" content="Guokai">
       <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpeg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -290,9 +290,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-22T13:25:20+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-22T13:25:20+08:00">
                 2019-05-22
               </time>
             
@@ -446,20 +446,20 @@ User-scalable： bool值，表示用户是否可以手动缩放页面，默认�
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
+            站点概览
           </li>
         </ul>
       
 
       <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Jing Guokai">
-          <p class="site-author-name" itemprop="name">Jing Guokai</p>
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="Guokai">
+          <p class="site-author-name" itemprop="name">Guokai</p>
            
-              <p class="site-description motion-element" itemprop="description">a blog</p>
+              <p class="site-description motion-element" itemprop="description">个人博客</p>
           
         </div>
         <nav class="site-state motion-element">
@@ -468,7 +468,7 @@ User-scalable： bool值，表示用户是否可以手动缩放页面，默认�
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
                 <span class="site-state-item-count">9</span>
-                <span class="site-state-item-name">posts</span>
+                <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
@@ -481,7 +481,7 @@ User-scalable： bool值，表示用户是否可以手动缩放页面，默认�
             <div class="site-state-item site-state-tags">
               
                 <span class="site-state-item-count">4</span>
-                <span class="site-state-item-name">tags</span>
+                <span class="site-state-item-name">标签</span>
               
             </div>
           
@@ -542,18 +542,18 @@ User-scalable： bool值，表示用户是否可以手动缩放页面，默认�
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Jing Guokai</span>
+  <span class="author" itemprop="copyrightHolder">Guokai</span>
 </div>
 
 
 <div class="powered-by">
-  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
-  Theme -
+  主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Muse
+    NexT.Mist
   </a>
 </div>
 
