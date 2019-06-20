@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="网络,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="经常在前端的面试群中发现有人会碰到面试官去询问tcp的握手和挥手问题，诸如你了解tcp吗，解释一下tcp的三次握手和四次挥手，倒不是说这些问题没用吧，但是感觉其实知道不知道这个，对前端的意义(纯属个人扯淡想法)不是特别的大，所以我认为如果只是简单的问这2个问题，是没有任何意义的(不如不问，哈哈哈)，but 记得在上家公司的时候有个老哥说过，网络通信其实还是蛮重要的，毕竟我们现在无论是工作还是生活">
+<meta name="keywords" content="网络">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅谈tcp">
+<meta property="og:url" content="https://jinggk.github.io/2018/12/15/关于tcp/index.html">
+<meta property="og:site_name" content="Guokai Blog">
+<meta property="og:description" content="经常在前端的面试群中发现有人会碰到面试官去询问tcp的握手和挥手问题，诸如你了解tcp吗，解释一下tcp的三次握手和四次挥手，倒不是说这些问题没用吧，但是感觉其实知道不知道这个，对前端的意义(纯属个人扯淡想法)不是特别的大，所以我认为如果只是简单的问这2个问题，是没有任何意义的(不如不问，哈哈哈)，but 记得在上家公司的时候有个老哥说过，网络通信其实还是蛮重要的，毕竟我们现在无论是工作还是生活">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b002eb8a2045644.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b002ebd5ca21200.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b0fcfdbf5175380.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b10272289a28985.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b002dea98659548.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b10e34ba3c74469.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b002f1d28520287.png">
+<meta property="og:image" content="http://hi.csdn.net/attachment/201108/7/0_1312718564tZXD.gif">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b002edb09192328.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b002ee0eee77060.png">
+<meta property="og:image" content="https://i.loli.net/2019/06/20/5d0b11eb5c31665131.png">
+<meta property="og:image" content="https://coolshell.cn/wp-content/uploads/2014/05/FASTIncast021.png">
+<meta property="og:updated_time" content="2019-06-20T04:57:32.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浅谈tcp">
+<meta name="twitter:description" content="经常在前端的面试群中发现有人会碰到面试官去询问tcp的握手和挥手问题，诸如你了解tcp吗，解释一下tcp的三次握手和四次挥手，倒不是说这些问题没用吧，但是感觉其实知道不知道这个，对前端的意义(纯属个人扯淡想法)不是特别的大，所以我认为如果只是简单的问这2个问题，是没有任何意义的(不如不问，哈哈哈)，but 记得在上家公司的时候有个老哥说过，网络通信其实还是蛮重要的，毕竟我们现在无论是工作还是生活">
+<meta name="twitter:image" content="https://i.loli.net/2019/06/20/5d0b002eb8a2045644.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jinggk.github.io/2018/12/15/关于tcp/">
+
+
+
+
+
+  <title>浅谈tcp | Guokai Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Guokai Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">shanbay frontend engineer</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2018/12/15/关于tcp/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jing Guokai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guokai Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浅谈tcp</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-15T14:31:54+08:00">
+                2018-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>经常在前端的面试群中发现有人会碰到面试官去询问tcp的握手和挥手问题，诸如你了解tcp吗，解释一下tcp的三次握手和四次挥手，倒不是说这些问题没用吧，但是感觉其实知道不知道这个，对前端的意义(纯属个人扯淡想法)不是特别的大，所以我认为如果只是简单的问这2个问题，是没有任何意义的(不如不问，哈哈哈)，but 记得在上家公司的时候有个老哥说过，网络通信其实还是蛮重要的，毕竟我们现在无论是工作还是生活基本都处于互联网之中，尤其作为开发者基本上每天都在和http请求打交道，so 了解网络传输的原理还是有必要的，下面我们稍微深入的来看下网络传输的内容。</p>
+</blockquote>
+<h3 id="base"><a href="#base" class="headerlink" title="base"></a>base</h3><p>OSI(Open Systems Interconncection，开放系统互联)网络分层</p>
+<p> 7.应用层(Application)<br> 6.表示层(Presentation)<br> 5.会话层(Session)<br> 4.传输层(Transport)<br> 3.网络层(Network)    – 路由器<br> 2.数据链路层(Data Link) – 交换机<br> 1.物理层(Physical) – 网卡、集线器（Hub） </p>
+<p>基础内容不做过多的讲解，有需要的可以<a href="https://juejin.im/post/5a98e1f7f265da237410694e" target="_blank" rel="noopener">出门右转</a><br>ok 我们今天主要关注的是tcp层的内容，下面的内容，如果有兴趣建议大家按照步骤实际操作去看看，首先介绍一个工具wireshark，这个工具可以帮助我们抓到tcp以及更底层的包，下载到<a href="https://www.wireshark.org/" target="_blank" rel="noopener">这里</a>,打开后有个download，下载自己系统能用的就好，一路安装到全部完成，接下来我们开始一次实战抓包。</p>
+<h3 id="抓包"><a href="#抓包" class="headerlink" title="抓包"></a>抓包</h3><p>我这里利用了<a href="https://www.baidu.com" target="_blank" rel="noopener">百度的首页</a>做了一次抓包实验，首先要设置一个过滤<br><img src="https://i.loli.net/2019/06/20/5d0b002eb8a2045644.png"><br>你可以选择http 和 tcp 或者 tcp only<br><img src="https://i.loli.net/2019/06/20/5d0b002ebd5ca21200.png"><br>然后到控制台中去ping 一下百度首页的ip<br><img src="https://i.loli.net/2019/06/20/5d0b0fcfdbf5175380.png"></p>
+<p>ok 看到ip是180.97.33.108</p>
+<p>然后我们到wireshark中设置一下查询的ip<br><img src="https://i.loli.net/2019/06/20/5d0b10272289a28985.png"><br>到chrome中打开百度的首页，然后就能看到tcp的传输信息了<br><img src="https://i.loli.net/2019/06/20/5d0b002dea98659548.png"><br>内容有点多，我们通过这个内容来观察一下tcp的传输过程</p>
+<h3 id="tcp-base"><a href="#tcp-base" class="headerlink" title="tcp base"></a>tcp base</h3><p>先看下tcp的头部报文结构<br><img src="https://i.loli.net/2019/06/20/5d0b10e34ba3c74469.png"><br>1.tcp协议层是不关心ip的，具体ip的定位是由ip层来决定的，但是tcp层需要确定端口号，所以他会携带source 和 destination的port信息，以便能找到对应的端口号；</p>
+<p>2.sequence number 实际中使用的SEQ，也就是序号，这个序号起了很重要的作用，我们都知道tcp和udp最大的区别在于tcp是稳定并且有序的，其中seq就可以保证有序，当A向B发送一个数据包的时候，seq会叠加，每一个传输方在传送数据的时候都会带上这个信息，另一端能按照这个序号来排序收到信息的顺序，从未保证了信息的传递是有序的，也能通过它来确认有没有出现丢包的情况；另外要注意的是当有数据需要发送的时候，seq会随该序列号为原点，对自己将要发送的每个字节的数据进行编号，比如当前seq = 10，本次要发送的数据包大小是200字节，那么实际发送的时候会更新seq=210，以便保证传输的数据的顺序；</p>
+<p>3.acknowledge number，实际中使用的ACK，是另一端对对方seq的一个回应，一般会把对方给的seq+1然后下一次发包的时候带上，这样的话对方就知道我们是收到前面的消息的；</p>
+<p>4.windown代表的是滑动窗口，实际中用win来表示，win的大小很重要，win越大的传输越快，因为win的大小直接决定了某一端一次可以同时发送多少个数据包，而不用等待对方的应答ACK回来，但是win会随着每一个数据包的发送而变小(稍后解释)；</p>
+<p>5.reserved 是tcp传输很重要的角色，标志位，响应方会根据对方给的信号执行对应的操作，比如执行断开连接的时候一般都是使用FIN标志位；</p>
+<p>基础内容不做过多介绍，不懂的可以移步[这里]先看下概念，后面我们会结合实际来介绍(<a href="https://blog.csdn.net/jijianshuai/article/details/80883091" target="_blank" rel="noopener">https://blog.csdn.net/jijianshuai/article/details/80883091</a>)</p>
+<h3 id="三次握手-敲黑板"><a href="#三次握手-敲黑板" class="headerlink" title="三次握手(敲黑板)"></a>三次握手(敲黑板)</h3><img src="https://i.loli.net/2019/06/20/5d0b002f1d28520287.png">
+观察前几次传输，TLS类型的我们可以先忽略，它是处理ssl加密的内容，有兴趣的可以自己去google，重点看前三次的tcp，第一次是我们自己的ip向百度的服务器ip发了第一个包，seq=0，起始的数据信号是0，win=65535代表我这边的窗口大小是65535，len=0代表我这边希望接受的包的大小长度是0，mss代表我这边本次传输能接收的最大包的内容是1460(其余的我们暂时不用关心)。下面我们模拟一下对话内容：
+
+<p>A：B，你好，我是A 请求建立连接，我的seq是0，我的win是65535，我希望本次回应我的内容长度len为0，我本次能接收的最大内容是1460，over；<br>B：A，你也好，收到你的信息了，我是B，我本次的seq是0（注意，双方的序号是独立计算的，这里都从0开始的），我回应你的ack是1(A的seq+1，代表我收到你seq是0的消息了)，我的窗口大小是8192，我希望你回应我本次消息的len也是0，我这边能接收的最大回应大小是1452，over；<br>A：好的，我收到你的回应了，我现在给你发送的seq是1(上一次是0，这次是1)，我回应你的ack是1(B的seq+1)，我当前的窗口大小是25984，我希望的回应长度是0；我们建立好连接了，over；</p>
+<p>到这里，完整的三次握手就结束了，后面就可以执行别的数据传输了，到这里，不知道有没有想过，为什么确定一次连接需要三次握手，不是1次，也不是2次，也不是4次，</p>
+<p>首先，1次肯定不行，1次的话 一方无法确认另一方的情况，所以最少都是2次起步，</p>
+<p>2次：<br>A：喂喂喂，我是A，你听的到吗？<br>B：在在在，我能听到，我是B，你能听到我吗?<br>A：(听到了，老子不想理你)<br>B：喂喂喂？听不听到？我X，对面死了，我挂了。。</p>
+<p>4次：<br>A：喂喂喂，我是A，你听的到吗？<br>B：在在在，我能听到，我是B，你能听到我吗?<br>A：听到了，你呢？你能听到吗？<br>B：？？你是智障？我不是说了我能听到吗，不想跟xx说话。。。</p>
+<p>所以最合理的还是3次：</p>
+<p>A：喂喂喂，我是A，你听的到吗？<br>B：在在在，我能听到，我是B，你能听到我吗?<br>A：听到了。我们今天去钓鱼吧。。balabala</p>
+<p>so，就是这样，其实不是不能更多，但是可靠的同时，还要考虑性能和时间问题，所以，目前公认的握手次数还是三次比较合理。</p>
+<h3 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h3><p>我们知道tcp的连接是全双工的，A和B是可以互相通信的，不理解的话，可以想想打电话（类比，不要当真），打电话的场景就是单双工的，因为同一时间只能一个人说话，另一个人听，如果2个人一起说话，那谁都听不清楚了，没有意义，但是tcp是全双工的，就是A 正在给 B发信息的同时，B也在给A发信息，所以当断开的时候，必须要求双方都得知道，如果只有一方知道，肯定不行，因此，断开的时候，就需要下面这样：</p>
+<img src="http://hi.csdn.net/attachment/201108/7/0_1312718564tZXD.gif">
+
+<p>A：B，不好意思，我这边需要关闭连接了，你准备一下？(发了一个fin信号给B，等待回应)<br>B：好的A，我收到你的关闭信号了，我还有数据没发好，你等我下（回应A，带回去ACK的最后一个信息，失败可以重发）<br>B：A老弟，我好了，我可以关闭了，给你最后说一下，等下你回应我的话，我就直接关了；<br>A：好的老哥，我回应你一下，你收到就关闭吧，不用理我(发完这条信息后，进入time_wait状态)<br>B：(收到ack信息，直接就关闭了)，此过程不产生数据的交互，不算挥手次数<br>A：等待2MSL(最大报文段生存时间)后，B没东西给过来，我也关了；</p>
+<p>到这里4次挥手就结束了，2个问题：</p>
+<p>1.为什么握手需要三次，而挥手却需要四次？</p>
+<p>握手的时候，A和B打个招呼，B可以直接把自己的SYN信息和对A的回应ACK信息一起带上，但是挥手的时候，A说我要断开了，B还没发完最后的数据，因此需要先回应一下A，我收到你的断开的请求了，但是你要等我把最后的内容给你，所以这里分开了2步：<br>    （1）回应A；<br>    （2）发送自己的最后一个数据</p>
+<p>2.为什么A进入TIME_WAIT需要等待最大报文段生存的时间后，才能关闭？</p>
+<p>原因是，担心网络不可靠而导致的丢包，最后一个回应B的ACK万一丢了怎么办，在这个时间内，A是可以重新发包的，但是超过了最大等待时间的话，就算收不到也没用了，所以就可以关闭了。</p>
+<h3 id="如何理解滑动窗口的作用？"><a href="#如何理解滑动窗口的作用？" class="headerlink" title="如何理解滑动窗口的作用？"></a>如何理解滑动窗口的作用？</h3><p>从上面的内容，我们简单了解了三次握手和四次挥手的内容，然后也知道了一些报文字段的意义，但是网络本身是不稳定的，也就是说中间无法保证包一定会到对面，那么tcp是如何在尽可能少的时间内实现稳定和有序传输的？</p>
+<p>我们知道SYN信息中会带上自己的seq，序号，这样可以保证另一方接受到后知道如何排序，但是如果发送必须都是同步的，想象，A 给 B发送的时候，需要给B 1，2，3，4，5个包，发了1后，死等1的ack回来，再给2，死等2的ack回来，在linux下每个tcp的timeout最大是<code>2^5 - 1 = 63</code>s(默认的retrytime是5次)的时间，因为当发了一个包出去后，在一定时间内没收到ACK回应，为了确认不能丢包的问题，会启动重试机制，重试5次，它们的延迟分别是：1 秒、3 秒、7 秒、15 秒、31 秒，其中31s是前5次重试的时间1+2+4+8+16=31s，最后的32s是等待最后一次重试也超时(等待的时间是2的N次方秒)，所以一共就是63s，如果一个一个等，是不是有点太恐怖了，万一网络环境比较差，所以为了能在不丢包的情况下，尽量减少时间的损耗，引入了滑动窗口的概念，window</p>
+<p>由于窗口由16位bit所定义，所以接收端TCP，窗口能最大提供65535个字节的缓冲，其实这个滑动窗口主要就是做限流和缓冲用的，每一个tcp传输中的win提供的是对方的窗口大小，当A向B发数据的时候，超过B的win长度的数据会被丢掉，同时窗口还可以提高发送数据的效率，通过类似于并发的行为，如下图：<br><img src="https://i.loli.net/2019/06/20/5d0b002edb09192328.png"></p>
+<p>可以看到A向B连续发了3条数据，但是回应B的ACK没有变，也就是说都是回应同一个B的同一个响应，但是A自己的seq更新了3次，先是1，然后是69最后是1521，说明这三个包是连续几乎同时发出去的，实际上只要当前数据包的大小不超过对方的window大小，就可以连续发的，接着看：</p>
+<img src="https://i.loli.net/2019/06/20/5d0b002ee0eee77060.png">
+这四个是B响应给A的数据包，可以看到都是在响应A给的数据包，注意看因为A连续发了好几条，B可能一下反应不过来，所以B会把这些信息放到缓冲区，但是放的数据越多，那么自己的缓冲区就越小，就是通过B自己的win来体现，我们可以看到B的win再连续变小，说明它还没处理好，到第4条信息的时候，我们看到B给了一个信息叫WINDOW UPDATE 然后发现B的win变大了，这就意味着它已经处理好A之前连续发的几个数据包了，然后就会重新更新自己的win的大小，要注意的是当tcp一端的win接近或者等于0的时候，传输将会停止，直到window update更新说buffer已经清空了，传输才会继续。
+
+
+<h3 id="丢包？"><a href="#丢包？" class="headerlink" title="丢包？"></a>丢包？</h3><p>看下面这个图<br><img src="https://i.loli.net/2019/06/20/5d0b11eb5c31665131.png"><br>明显能看到ACK是连续变大的，再一次链接中，不可能存在说先ACK=3922然后ACK=3913，这样的话另一端在收到3922的时候就认为之前的全部接收到了，实际上3913还没收到，所以，要注意SeqNum和Ack是以字节数为单位，所以ack的时候，不能跳着确认，只能确认最大的连续收到的包。那么，考虑以下情况，假如A给的分别是1，2，3，4到5 5个包，B这边收到1，2，Ack一个3（代表收到1，2了），然后3丢了，4和5收到了，能直接ACK = 6吗？当然不行，这样的话tcp就是不稳定的了，所以tcp会有超时重传，当1和2到了后，3没到，但是4和5到了，这个时候另一端回3，表示我这边只拿到1和2了，但是这种情况下有一个很严重的问题，就是其实4和5都到了，但是另一端没收到4和5的回应，会认为4和5也丢了，于是过了一会又开始重新传3，4，5，这样的话浪费了带宽，所以超时重传有2种方案：</p>
+<p>1.timeout后只重新传3；<br>2.timeout后重新给3，4，5；</p>
+<p>2种方案有好有坏，第一种比较慢，第二种浪费带宽，所以tcp引入了一种快速超时重试机制(Fast Retransmit算法)，不以时间计算，而以数据做驱动重新传送，如果包没有连续到达，比如1到了，2没到，3，4，5也到了，这个时候，B始终返回ACK=2，代表只确认1，然后A就知道2没到，重新发2，但是B一旦收到2会直接ACK=6给A，这个的意思就是说2拿到后，345也收到了，直接给6就ok，如下图：</p>
+<img src="https://coolshell.cn/wp-content/uploads/2014/05/FASTIncast021.png">
+
+<p>上面说的只是一种特别简单的方案，目前，linux2.4之后，采用了一种更先进的方式，有想了解的可以走<a href="https://coolshell.cn/articles/11564.html" target="_blank" rel="noopener">这里</a></p>
+<h3 id="攻击"><a href="#攻击" class="headerlink" title="攻击"></a>攻击</h3><p>典型的场景是DDOS攻击，也可以说是tcp的SYN Flood攻击，又叫洪水攻击；<br>根据上面的分析，我们知道tcp的握手环节是比较耗时的，当client端发起连接请求的时候，server端会回应，然后等待client的最终确认信息，默认情况下的linux会等待1-63s这样，最长是63之后才会主动断开，之前这段时间内属于半连接的状态，服务器不会丢弃到，而是会等，试想如果有一个人突然想你的server瞬间之内发送了几千万个连接请求，但是对服务端的响应不做理睬，这样很容易就导致我们正常的tcp连接进不去，从而出现服务拒绝的情况，而他只需要一个简简单单的脚本去给你丢包就可以了，这种情况就会导致服务器对正常的客户端表现为宕机。。此种攻击的成本比较低，但是防护却特别麻烦，因为你必须要保证正常的不能因为访问次数的提高而出现拒绝。</p>
+<p>另外一个没有这个情况严重的攻击是<a href="http://blog.51cto.com/changxy/751958" target="_blank" rel="noopener">ACK Flood攻击</a>,有兴趣的可以自行去查看。</p>
+<h3 id="TCP是个巨复杂的协议，我们今天通过一次抓包了解了三次握手，四次挥手，滑动窗口。超时重传机制和典型的tcp攻击方式，期待下次继续。。"><a href="#TCP是个巨复杂的协议，我们今天通过一次抓包了解了三次握手，四次挥手，滑动窗口。超时重传机制和典型的tcp攻击方式，期待下次继续。。" class="headerlink" title="TCP是个巨复杂的协议，我们今天通过一次抓包了解了三次握手，四次挥手，滑动窗口。超时重传机制和典型的tcp攻击方式，期待下次继续。。"></a>TCP是个巨复杂的协议，我们今天通过一次抓包了解了三次握手，四次挥手，滑动窗口。超时重传机制和典型的tcp攻击方式，期待下次继续。。</h3>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/网络/" rel="tag"># 网络</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/11/防抖和节流/" rel="next" title="防抖和节流">
+                <i class="fa fa-chevron-left"></i> 防抖和节流
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/01/21/随笔/" rel="prev" title="随笔">
+                随笔 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Jing Guokai">
+          <p class="site-author-name" itemprop="name">Jing Guokai</p>
+           
+              <p class="site-description motion-element" itemprop="description">a blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#base"><span class="nav-number">1.</span> <span class="nav-text">base</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#抓包"><span class="nav-number">2.</span> <span class="nav-text">抓包</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#tcp-base"><span class="nav-number">3.</span> <span class="nav-text">tcp base</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#三次握手-敲黑板"><span class="nav-number">4.</span> <span class="nav-text">三次握手(敲黑板)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#四次挥手"><span class="nav-number">5.</span> <span class="nav-text">四次挥手</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#如何理解滑动窗口的作用？"><span class="nav-number">6.</span> <span class="nav-text">如何理解滑动窗口的作用？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#丢包？"><span class="nav-number">7.</span> <span class="nav-text">丢包？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#攻击"><span class="nav-number">8.</span> <span class="nav-text">攻击</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#TCP是个巨复杂的协议，我们今天通过一次抓包了解了三次握手，四次挥手，滑动窗口。超时重传机制和典型的tcp攻击方式，期待下次继续。。"><span class="nav-number">9.</span> <span class="nav-text">TCP是个巨复杂的协议，我们今天通过一次抓包了解了三次握手，四次挥手，滑动窗口。超时重传机制和典型的tcp攻击方式，期待下次继续。。</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jing Guokai</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

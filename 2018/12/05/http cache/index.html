@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="http,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="1.强缓存强缓存就是向浏览器缓存来查询文件是否存在以及是否可用http response header 中的expires 和 cache-control 字段,cache-control的优先级更高 expires 给的是具体的时间，这个有个明显的问题就是存在服务端和客户端时间不一致的情况，因此用的不是很多 cache-control 可能的情况有  public 所有内容都缓存，包括客户端和代">
+<meta name="keywords" content="http">
+<meta property="og:type" content="article">
+<meta property="og:title" content="http cache">
+<meta property="og:url" content="https://jinggk.github.io/2018/12/05/http cache/index.html">
+<meta property="og:site_name" content="Guokai Blog">
+<meta property="og:description" content="1.强缓存强缓存就是向浏览器缓存来查询文件是否存在以及是否可用http response header 中的expires 和 cache-control 字段,cache-control的优先级更高 expires 给的是具体的时间，这个有个明显的问题就是存在服务端和客户端时间不一致的情况，因此用的不是很多 cache-control 可能的情况有  public 所有内容都缓存，包括客户端和代">
+<meta property="og:locale" content="default">
+<meta property="og:updated_time" content="2019-06-20T05:14:46.464Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="http cache">
+<meta name="twitter:description" content="1.强缓存强缓存就是向浏览器缓存来查询文件是否存在以及是否可用http response header 中的expires 和 cache-control 字段,cache-control的优先级更高 expires 给的是具体的时间，这个有个明显的问题就是存在服务端和客户端时间不一致的情况，因此用的不是很多 cache-control 可能的情况有  public 所有内容都缓存，包括客户端和代">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jinggk.github.io/2018/12/05/http cache/">
+
+
+
+
+
+  <title>http cache | Guokai Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Guokai Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">shanbay frontend engineer</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2018/12/05/http cache/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jing Guokai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guokai Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">http cache</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2018-12-05T17:39:03+08:00">
+                2018-12-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="1-强缓存"><a href="#1-强缓存" class="headerlink" title="1.强缓存"></a>1.强缓存</h3><h4 id="强缓存就是向浏览器缓存来查询文件是否存在以及是否可用"><a href="#强缓存就是向浏览器缓存来查询文件是否存在以及是否可用" class="headerlink" title="强缓存就是向浏览器缓存来查询文件是否存在以及是否可用"></a>强缓存就是向浏览器缓存来查询文件是否存在以及是否可用</h4><p>http response header 中的expires 和 cache-control 字段,cache-control的优先级更高</p>
+<p>expires 给的是具体的时间，这个有个明显的问题就是存在服务端和客户端时间不一致的情况，因此用的不是很多</p>
+<p>cache-control 可能的情况有</p>
+<ol>
+<li>public 所有内容都缓存，包括客户端和代理服务端</li>
+<li>private 只有客户端可以缓存，这个也是cache-control的默认值</li>
+<li>no-cache 客户端会缓存内容，但是是否使用，需要协商缓存来决定</li>
+<li>no-store 所有内容都不缓存，包括协商缓存也不使用</li>
+<li>max-age=time 缓存会在time时间后失效，相对值</li>
+</ol>
+<p>比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Cache-Control:public, max-age=<span class="number">31536000</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-协商缓存"><a href="#2-协商缓存" class="headerlink" title="2.协商缓存"></a>2.协商缓存</h3><h4 id="协商缓存就是指强缓存失效，浏览器待着缓存标识到服务器上去查看缓存是否可用，它与强缓存最大的区别在于需要发起真正的请求"><a href="#协商缓存就是指强缓存失效，浏览器待着缓存标识到服务器上去查看缓存是否可用，它与强缓存最大的区别在于需要发起真正的请求" class="headerlink" title="协商缓存就是指强缓存失效，浏览器待着缓存标识到服务器上去查看缓存是否可用，它与强缓存最大的区别在于需要发起真正的请求"></a>协商缓存就是指强缓存失效，浏览器待着缓存标识到服务器上去查看缓存是否可用，它与强缓存最大的区别在于需要发起真正的请求</h4><p>常用的有两对：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">Last-Modified / If-Modified-Since</span><br><span class="line">Etag / If-None-Match <span class="comment">// 优先级更高</span></span><br></pre></td></tr></table></figure>
+
+<p><code>last-modified</code> 是服务器设置的文件最后被修改的时间。<br>浏览器拿到这个时间后，会再下一次发送请求的时候带上字段If-Modified-Since字段，其中放的就是上次浏览器给的最后修改的时间，服务器拿到这个时间后可以判断文件是否被更新过了从而决定是否使用缓存，如果可以使用缓存就会返回304</p>
+<p><code>Etag / If-None-Match</code> 和上面的原理基本一样，服务器在第一次返回的时候会携带Etag字段用来标识文件的唯一标识，类似于hash，之后浏览器在第二次请求的过程中会带上If-None-Match字段，服务器通过这个子段来判断缓存是否失效，从而返回304或者200</p>
+<h4 id="协商缓存和强缓存的共同点是，大家都是从使用客户端的缓存，不同点在于由谁来决定是否使用缓存。"><a href="#协商缓存和强缓存的共同点是，大家都是从使用客户端的缓存，不同点在于由谁来决定是否使用缓存。" class="headerlink" title="协商缓存和强缓存的共同点是，大家都是从使用客户端的缓存，不同点在于由谁来决定是否使用缓存。"></a>协商缓存和强缓存的共同点是，大家都是从使用客户端的缓存，不同点在于由谁来决定是否使用缓存。</h4>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/http/" rel="tag"># http</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/12/11/防抖和节流/" rel="prev" title="防抖和节流">
+                防抖和节流 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Jing Guokai">
+          <p class="site-author-name" itemprop="name">Jing Guokai</p>
+           
+              <p class="site-description motion-element" itemprop="description">a blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-强缓存"><span class="nav-number">1.</span> <span class="nav-text">1.强缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#强缓存就是向浏览器缓存来查询文件是否存在以及是否可用"><span class="nav-number">1.1.</span> <span class="nav-text">强缓存就是向浏览器缓存来查询文件是否存在以及是否可用</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-协商缓存"><span class="nav-number">2.</span> <span class="nav-text">2.协商缓存</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#协商缓存就是指强缓存失效，浏览器待着缓存标识到服务器上去查看缓存是否可用，它与强缓存最大的区别在于需要发起真正的请求"><span class="nav-number">2.1.</span> <span class="nav-text">协商缓存就是指强缓存失效，浏览器待着缓存标识到服务器上去查看缓存是否可用，它与强缓存最大的区别在于需要发起真正的请求</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#协商缓存和强缓存的共同点是，大家都是从使用客户端的缓存，不同点在于由谁来决定是否使用缓存。"><span class="nav-number">2.2.</span> <span class="nav-text">协商缓存和强缓存的共同点是，大家都是从使用客户端的缓存，不同点在于由谁来决定是否使用缓存。</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jing Guokai</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

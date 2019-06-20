@@ -1,0 +1,749 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang>
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="javascript,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="js的异步历史我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个">
+<meta name="keywords" content="javascript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="手写async函数">
+<meta property="og:url" content="https://jinggk.github.io/2019/03/05/手写async函数/index.html">
+<meta property="og:site_name" content="Guokai Blog">
+<meta property="og:description" content="js的异步历史我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="evernotecid://2E1F95D0-6D94-423F-BC95-0D422C913EFE/appyinxiangcom/22692071/ENResource/p24">
+<meta property="og:updated_time" content="2019-06-20T05:05:12.895Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="手写async函数">
+<meta name="twitter:description" content="js的异步历史我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个">
+<meta name="twitter:image" content="evernotecid://2E1F95D0-6D94-423F-BC95-0D422C913EFE/appyinxiangcom/22692071/ENResource/p24">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jinggk.github.io/2019/03/05/手写async函数/">
+
+
+
+
+
+  <title>手写async函数 | Guokai Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Guokai Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">shanbay frontend engineer</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2019/03/05/手写async函数/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Jing Guokai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guokai Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">手写async函数</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-03-05T21:58:18+08:00">
+                2019-03-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p><img src="evernotecid://2E1F95D0-6D94-423F-BC95-0D422C913EFE/appyinxiangcom/22692071/ENResource/p24" alt="1327f9baa13e86641c721d111e51bc1e.jpeg"></p>
+<h2 id="js的异步历史"><a href="#js的异步历史" class="headerlink" title="js的异步历史"></a>js的异步历史</h2><h5 id="我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？"><a href="#我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？" class="headerlink" title="我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？"></a>我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？</h5><h2 id="水深火热的callback"><a href="#水深火热的callback" class="headerlink" title="水深火热的callback"></a>水深火热的callback</h2><h5 id="受制于单线程的原因，JavaScript在处理异步任务的时候就出现了比较尴尬的局面，比如AJAX请求，如果事情只能一件一件的来，当用户到服务器上去请求的时候，必须干等到结果回来才能继续后面的动作，这显而易见是不能被接受的，因此callback顺势而出，到后来的nodejs崛起，实现IO读取等异步的方式都是采用了callback的方式，也诞生了臭名昭著的callback-hell，场面开始失控…"><a href="#受制于单线程的原因，JavaScript在处理异步任务的时候就出现了比较尴尬的局面，比如AJAX请求，如果事情只能一件一件的来，当用户到服务器上去请求的时候，必须干等到结果回来才能继续后面的动作，这显而易见是不能被接受的，因此callback顺势而出，到后来的nodejs崛起，实现IO读取等异步的方式都是采用了callback的方式，也诞生了臭名昭著的callback-hell，场面开始失控…" class="headerlink" title="受制于单线程的原因，JavaScript在处理异步任务的时候就出现了比较尴尬的局面，比如AJAX请求，如果事情只能一件一件的来，当用户到服务器上去请求的时候，必须干等到结果回来才能继续后面的动作，这显而易见是不能被接受的，因此callback顺势而出，到后来的nodejs崛起，实现IO读取等异步的方式都是采用了callback的方式，也诞生了臭名昭著的callback hell，场面开始失控…"></a>受制于单线程的原因，JavaScript在处理异步任务的时候就出现了比较尴尬的局面，比如AJAX请求，如果事情只能一件一件的来，当用户到服务器上去请求的时候，必须干等到结果回来才能继续后面的动作，这显而易见是不能被接受的，因此callback顺势而出，到后来的nodejs崛起，实现IO读取等异步的方式都是采用了callback的方式，也诞生了臭名昭著的callback hell，场面开始失控…</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> (<span class="params">param, cb</span>)</span>&#123;</span><br><span class="line">    <span class="literal">false</span>.readFile(param, <span class="function"><span class="keyword">function</span>(<span class="params">err, data</span>)</span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(err) <span class="keyword">return</span> cb(err);</span><br><span class="line">        async1(data, <span class="function"><span class="keyword">function</span>(<span class="params">err, data</span>)</span>&#123;</span><br><span class="line">            <span class="keyword">if</span>(err) <span class="keyword">return</span> cb(err);</span><br><span class="line">            async2(data, <span class="function"><span class="keyword">function</span>(<span class="params">err, data</span>)</span>&#123;</span><br><span class="line">                <span class="keyword">if</span>(err) <span class="keyword">return</span> cb(err);</span><br><span class="line">                <span class="comment">// asyncN... 不知道会有多少</span></span><br><span class="line">            &#125;)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="拯救callback的promise"><a href="#拯救callback的promise" class="headerlink" title="拯救callback的promise"></a>拯救callback的promise</h2><blockquote>
+<p>我的意中人是盖世英雄，有一天他会踏着七色云彩前来拯救我 </p>
+</blockquote>
+<h5 id="es6将promise纳入了JavaScript的标准，promise代表着“承诺”，初始化了一个“承诺”之后，你只要在then中定义好这个承诺若是在未来达成要做什么事情，在catch中定义好这个承诺失败了需要做什么事情，就ok了"><a href="#es6将promise纳入了JavaScript的标准，promise代表着“承诺”，初始化了一个“承诺”之后，你只要在then中定义好这个承诺若是在未来达成要做什么事情，在catch中定义好这个承诺失败了需要做什么事情，就ok了" class="headerlink" title="es6将promise纳入了JavaScript的标准，promise代表着“承诺”，初始化了一个“承诺”之后，你只要在then中定义好这个承诺若是在未来达成要做什么事情，在catch中定义好这个承诺失败了需要做什么事情，就ok了"></a>es6将promise纳入了JavaScript的标准，promise代表着“承诺”，初始化了一个“承诺”之后，你只要在then中定义好这个承诺若是在未来达成要做什么事情，在catch中定义好这个承诺失败了需要做什么事情，就ok了</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> somePromiseObject = <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">const</span> result = doSomeThing();</span><br><span class="line">    <span class="keyword">if</span>(result) &#123;</span><br><span class="line">        <span class="keyword">return</span> resolve(result); <span class="comment">// handle success</span></span><br><span class="line">    &#125;</span><br><span class="line">    reject(<span class="string">'err'</span>) <span class="comment">// handle error</span></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line">somePromiseObject</span><br><span class="line">    .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// success callback  </span></span><br><span class="line">    &#125;,</span><br><span class="line">    err =&gt; &#123;</span><br><span class="line">        <span class="comment">// err callback</span></span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+
+<h5 id="promise的出现完美的解救了callback的回调地狱，原因是promise允许链式调用，并且可以统一到最外层去做错误的catch"><a href="#promise的出现完美的解救了callback的回调地狱，原因是promise允许链式调用，并且可以统一到最外层去做错误的catch" class="headerlink" title="promise的出现完美的解救了callback的回调地狱，原因是promise允许链式调用，并且可以统一到最外层去做错误的catch~"></a>promise的出现完美的解救了callback的回调地狱，原因是promise允许链式调用，并且可以统一到最外层去做错误的catch~</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">somePromiseObject</span><br><span class="line">    .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// do someThings..</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// do someThings..</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .then(<span class="function"><span class="params">data</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// do someThings..</span></span><br><span class="line">    &#125;)</span><br><span class="line">    .catch(<span class="function"><span class="params">err</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="comment">// handle errs here</span></span><br><span class="line">    &#125;)</span><br></pre></td></tr></table></figure>
+
+<h4 id="but-当我们认为promise就是JavaScript解决异步的最优方案的时候，ES2017-标准又引入了async-函数，使得异步操作变得更加方便"><a href="#but-当我们认为promise就是JavaScript解决异步的最优方案的时候，ES2017-标准又引入了async-函数，使得异步操作变得更加方便" class="headerlink" title="but 当我们认为promise就是JavaScript解决异步的最优方案的时候，ES2017 标准又引入了async 函数，使得异步操作变得更加方便"></a>but 当我们认为promise就是JavaScript解决异步的最优方案的时候，ES2017 标准又引入了async 函数，使得异步操作变得更加方便</h4><h2 id="异步终极利器async函数"><a href="#异步终极利器async函数" class="headerlink" title="异步终极利器async函数"></a>异步终极利器async函数</h2><blockquote>
+<p>我猜中了前头可我猜不中这结局 –promise</p>
+</blockquote>
+<h5 id="没错就在es6将promise加入标准后的不久，es7又新加入一种新的异步解决方案（号称终极解决方案）–-async函数"><a href="#没错就在es6将promise加入标准后的不久，es7又新加入一种新的异步解决方案（号称终极解决方案）–-async函数" class="headerlink" title="没错就在es6将promise加入标准后的不久，es7又新加入一种新的异步解决方案（号称终极解决方案）– async函数"></a>没错就在es6将promise加入标准后的不久，es7又新加入一种新的异步解决方案（号称终极解决方案）– async函数</h5><h5 id="假设有个异步函数"><a href="#假设有个异步函数" class="headerlink" title="假设有个异步函数"></a>假设有个异步函数</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">ajax1().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">    ajax2().then(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        ajax3().then(<span class="function">(<span class="params">data</span>) =&gt;</span> &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(data) <span class="comment">// success</span></span><br><span class="line">        &#125;, err =&gt; &#123;</span><br><span class="line">            <span class="built_in">console</span>.log(err)</span><br><span class="line">        &#125;)</span><br><span class="line">    &#125;,</span><br><span class="line">    err =&gt; &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(err)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;, err =&gt; &#123;</span><br><span class="line">    <span class="built_in">console</span>.log(err)</span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
+
+<h5 id="好吧我们赶紧试试用async来实现"><a href="#好吧我们赶紧试试用async来实现" class="headerlink" title="好吧我们赶紧试试用async来实现"></a>好吧我们赶紧试试用async来实现</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> asyncFun = <span class="keyword">async</span> () =&gt; &#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">        <span class="keyword">await</span> ajax1();</span><br><span class="line">        <span class="keyword">await</span> ajax2();</span><br><span class="line">        <span class="keyword">const</span> data = <span class="keyword">await</span> ajax3();</span><br><span class="line">        <span class="built_in">console</span>.log(data) <span class="comment">// success</span></span><br><span class="line">    &#125;<span class="keyword">catch</span>(err)&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(err) <span class="comment">// handle errs here</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h5 id="可以看到明显的看到，async的写法比promise的链式更舒服，它允许我们像写同步的语法一样去写嵌套的异步，实际的效果也会按照async-被-await-的顺序来运行，而且对开发最友好的是所有中间出现的错误都能被最外层的catch给捕获，所以说很多人都认为async将是js异步的终极解决方案，下面我们先来认识一下实现async的函数的一个基础函数，generator函数"><a href="#可以看到明显的看到，async的写法比promise的链式更舒服，它允许我们像写同步的语法一样去写嵌套的异步，实际的效果也会按照async-被-await-的顺序来运行，而且对开发最友好的是所有中间出现的错误都能被最外层的catch给捕获，所以说很多人都认为async将是js异步的终极解决方案，下面我们先来认识一下实现async的函数的一个基础函数，generator函数" class="headerlink" title="可以看到明显的看到，async的写法比promise的链式更舒服，它允许我们像写同步的语法一样去写嵌套的异步，实际的效果也会按照async 被 await 的顺序来运行，而且对开发最友好的是所有中间出现的错误都能被最外层的catch给捕获，所以说很多人都认为async将是js异步的终极解决方案，下面我们先来认识一下实现async的函数的一个基础函数，generator函数~"></a>可以看到明显的看到，async的写法比promise的链式更舒服，它允许我们像写同步的语法一样去写嵌套的异步，实际的效果也会按照async 被 await 的顺序来运行，而且对开发最友好的是所有中间出现的错误都能被最外层的catch给捕获，所以说很多人都认为async将是js异步的终极解决方案，下面我们先来认识一下实现async的函数的一个基础函数，generator函数~</h5><h2 id="什么是generator"><a href="#什么是generator" class="headerlink" title="什么是generator"></a>什么是generator</h2><ul>
+<li><p>可以先看下阮一峰老师的<a href="http://es6.ruanyifeng.com/#docs/generator" target="_blank" rel="noopener">概念理解</a></p>
+</li>
+<li><p>generator函数最神奇的地方在于它可以交出函数的控制权，什么意思呢，我们正常情况下的函数一旦被执行就会全部执行结束，除非发生错误，是不能在执行中间停下来的，而generator函数就不一样了，它可以用yeild关键字来将函数的执行暂停，generator函数执行后会返回一个迭代器(也可以理解为指针)，这个指针对象拥有一个关键的next方法，用来移动当前指针所在的位置，每次调用next返回一个对象，包含2个内容：value：当前generator函数中yeild语句后面表达式的值，done：bool值，标识当前迭代器是否结束迭代了，也就是说是否所有的yeild语句都走完了；</p>
+</li>
+<li><p>genarator 不仅仅可以暂停一个函数的执行，还可以在执行的时候送入数据给函数，改变函数中yeild关键字后面表达式的值；</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">gen</span>(<span class="params">x</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> y = <span class="keyword">yield</span> x + <span class="number">2</span>;</span><br><span class="line">    <span class="keyword">const</span> y1 = <span class="keyword">yield</span> y + <span class="number">3</span>;</span><br><span class="line">    <span class="keyword">return</span> y1;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> g = gen(<span class="number">1</span>);</span><br><span class="line"><span class="built_in">console</span>.log(g.next()); <span class="comment">// &#123; value: 3, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(g.next(<span class="number">2</span>)); <span class="comment">// &#123; value: 5, done: false &#125;</span></span><br><span class="line"><span class="built_in">console</span>.log(g.next()); <span class="comment">// &#123; value: undefined, done: true &#125;</span></span><br></pre></td></tr></table></figure>
+</li>
+<li><p>可以看到运行g.next(2)之前y的值已经是3了，+3应该是6，实际返回的确实5，因为我们给入的值会替换掉yeild关键字后面的表达式，也就是y=2了，所以next(2)后的值是5而不是6；</p>
+</li>
+</ul>
+<h5 id="既然generator可以暂停，如果我们每次遇到promise就暂停，等拿到promise-then-执行的结果在返回data，岂不是就是async函数的表现形式？dei，这确实就是async实现的基本原理，下面我们一起来手撸一个模拟async的函数–”myAsync”，盘它！"><a href="#既然generator可以暂停，如果我们每次遇到promise就暂停，等拿到promise-then-执行的结果在返回data，岂不是就是async函数的表现形式？dei，这确实就是async实现的基本原理，下面我们一起来手撸一个模拟async的函数–”myAsync”，盘它！" class="headerlink" title="既然generator可以暂停，如果我们每次遇到promise就暂停，等拿到promise.then()执行的结果在返回data，岂不是就是async函数的表现形式？dei，这确实就是async实现的基本原理，下面我们一起来手撸一个模拟async的函数–”myAsync”，盘它！"></a>既然generator可以暂停，如果我们每次遇到promise就暂停，等拿到promise.then()执行的结果在返回data，岂不是就是async函数的表现形式？dei，这确实就是async实现的基本原理，下面我们一起来手撸一个模拟async的函数–”myAsync”，盘它！</h5><h2 id="盘它"><a href="#盘它" class="headerlink" title="盘它"></a>盘它</h2><ol>
+<li><p>根据async函数的表现，async关键字后面跟的是一个generator函数，我们用函数来模拟，如下结果：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">    <span class="comment">// 函数A(正常情况);</span></span><br><span class="line"><span class="keyword">const</span> test = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span> <span class="title">myGenerator</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="keyword">await</span> <span class="built_in">Promise</span>.resolve(<span class="string">"success"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(data);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 函数B(模拟情况);</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myAsync</span>(<span class="params">myGenerator</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// handle...</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">myGenerator</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="keyword">yield</span> <span class="built_in">Promise</span>.resolve(<span class="string">"success"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(data); <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> test = myAsync(myGenerator);</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>ok，然后我们来实现myAsync函数，这个函数会接受一个generator函数，我们知道generator函数调用后才会生成迭代器，拿到迭代器后，我们肯定需要调用next()来获取下一个yeild的值，然后如果这个值是一个promise，那我们就调用then拿到结果后再next到下一次的迭代中，否则，我们直接把拿到的数据不做处理直接给到next–核心思想：generator的迭代器结果，是promise就等异步完成，否则就直接返回数据，然后递归调用handle函数处理下一个迭代，直到迭代器的done是true，返回，看代码：</p>
+</li>
+</ol>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数B(模拟情况);</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myAsync</span>(<span class="params">myGenerator</span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> gen = myGenerator(); <span class="comment">// 生成迭代器</span></span><br><span class="line">    <span class="keyword">const</span> handle = <span class="function"><span class="params">genResult</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (genResult.done) <span class="keyword">return</span>; <span class="comment">// 如果迭代器结束了，直接返回；</span></span><br><span class="line">        <span class="keyword">return</span> genResult.value <span class="keyword">instanceof</span> <span class="built_in">Promise</span> <span class="comment">// 判断当前迭代器的value是否是Promise的实例</span></span><br><span class="line">            ? genResult.value</span><br><span class="line">                  <span class="comment">// 如果是，则等待异步完成后继续递归下一个迭代，并把resolve后的data带过去</span></span><br><span class="line">                  .then(<span class="function"><span class="params">data</span> =&gt;</span> handle(gen.next(data)))</span><br><span class="line">                  .catch(<span class="function"><span class="params">err</span> =&gt;</span> gen.throw(err)) <span class="comment">// gen.throw 可以抛出一个允许外层去catch的err</span></span><br><span class="line">            : handle(gen.next(genResult.value)); <span class="comment">// 如果不是promise，就可以直接递归下一次迭代了</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        handle(gen.next()); <span class="comment">// 开始处理next迭代</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="keyword">throw</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span>* <span class="title">myGenerator</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">const</span> data = <span class="keyword">yield</span> <span class="built_in">Promise</span>.resolve(<span class="string">"success"</span>);</span><br><span class="line">    <span class="built_in">console</span>.log(data); <span class="comment">// success</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> test = myAsync(myGenerator);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>到现在其实我们的核心功能handle函数就完成了，现在去调用next()方法，已经看到可以打印success了，但是，除了正常的promise，我们还要考虑下面的情况</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数A(正常情况);</span></span><br><span class="line"><span class="keyword">const</span> a = &#123;</span><br><span class="line">    then: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"then"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">123123</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> test0 = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> test1 = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span>;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> test2 = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">123</span>);</span><br><span class="line">&#125;;</span><br><span class="line"><span class="keyword">const</span> test4 = <span class="keyword">async</span> <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">test0().then(<span class="built_in">console</span>.log); <span class="comment">// undefined</span></span><br><span class="line">test1().then(<span class="built_in">console</span>.log); <span class="comment">// 123</span></span><br><span class="line">test2().then(<span class="built_in">console</span>.log); <span class="comment">// 123 undefined</span></span><br><span class="line">test4().then(<span class="built_in">console</span>.log); <span class="comment">// then</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>也就是说在async接受到的函数不是generator函数的情况下：</p>
+</blockquote>
+<ol>
+<li>async函数默认返回一Promise.resolve(undefined)</li>
+<li>当async接受到的函数有返回值，并且返回值不是promise的情况下，async函数默认用promise包装这个返回结果</li>
+<li>当async接受到函数没有返回值，async会直接运行函数，并返回一个Promise.resolve(undefined)</li>
+<li>考虑到thenable这种promise的鸭子类型函数的特殊性，我尝试去返回了一个这种类型的对象，果然，发现then被执行了~</li>
+</ol>
+<h5 id="那么，我们来完善边界情况的处理"><a href="#那么，我们来完善边界情况的处理" class="headerlink" title="那么，我们来完善边界情况的处理"></a>那么，我们来完善边界情况的处理</h5><blockquote>
+<p>所以现在的代码变成</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 函数B(模拟情况);</span></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">myAsync</span>(<span class="params">myGenerator</span>) </span>&#123;</span><br><span class="line">    <span class="comment">// 判断接受到的参数不是一个generator函数</span></span><br><span class="line">    <span class="keyword">if</span> (</span><br><span class="line">        <span class="built_in">Object</span>.prototype.toString.call(myGenerator) !==</span><br><span class="line">        <span class="string">"[object GeneratorFunction]"</span></span><br><span class="line">    ) &#123;</span><br><span class="line">        <span class="comment">// 如果是一个普通函数</span></span><br><span class="line">        <span class="keyword">if</span> (</span><br><span class="line">            <span class="built_in">Object</span>.prototype.toString.call(myGenerator) === <span class="string">"[object Function]"</span></span><br><span class="line">        ) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">                <span class="comment">// 默认返回一个promise对象</span></span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">const</span> data = myGenerator();</span><br><span class="line">                    <span class="keyword">return</span> resolve(data); <span class="comment">// 尝试运行这个函数，并把结果resolve出去</span></span><br><span class="line">                &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">                    <span class="keyword">return</span> reject(err); <span class="comment">// 失败处理</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 如果参数含有then这个方法--thenable 鸭子类型</span></span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">typeof</span> myGenerator.then === <span class="string">"function"</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function">(<span class="params">resolve, reject</span>) =&gt;</span> &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="comment">// 运行这个对象的then函数，并resolve出去</span></span><br><span class="line">                    <span class="keyword">const</span> data = myGenerator.then();</span><br><span class="line">                    <span class="keyword">return</span> resolve(data);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">                    <span class="keyword">return</span> reject(err); <span class="comment">// 失败处理</span></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 剩下的情况，统一resolve出去给的参数</span></span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">Promise</span>.resolve(myGenerator);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">const</span> gen = myGenerator(); <span class="comment">// 生成迭代器</span></span><br><span class="line">    <span class="keyword">const</span> handle = <span class="function"><span class="params">genResult</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (genResult.done) <span class="keyword">return</span>; <span class="comment">// 如果迭代器结束了，直接返回；</span></span><br><span class="line">        <span class="keyword">return</span> genResult.value <span class="keyword">instanceof</span> <span class="built_in">Promise</span> <span class="comment">// 判断当前迭代器的value是否是Promise的实例</span></span><br><span class="line">            ? genResult.value</span><br><span class="line">                  .then(<span class="function"><span class="params">data</span> =&gt;</span> handle(gen.next(data))) <span class="comment">// 如果是，则等待异步完成后继续递归下一个迭代，并把resolve后的data带过去</span></span><br><span class="line">                  .catch(<span class="function"><span class="params">err</span> =&gt;</span> gen.throw(err)) <span class="comment">// gen.throw 可以抛出一个允许外层去catch的err</span></span><br><span class="line">            : handle(gen.next(genResult.value)); <span class="comment">// 如果不是promise，就可以直接递归下一次迭代了</span></span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        handle(gen.next()); <span class="comment">// 开始处理next迭代</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="keyword">throw</span> err;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> a = &#123;</span><br><span class="line">    then: <span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="string">"then"</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="number">123123</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> test0 = myAsync(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> test1 = myAsync(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">123</span>;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">const</span> test2 = myAsync(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="number">123</span>);</span><br><span class="line">&#125;);</span><br><span class="line"><span class="keyword">const</span> test4 = myAsync(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> a;</span><br><span class="line">&#125;);</span><br><span class="line"></span><br><span class="line">test0.then(<span class="built_in">console</span>.log); <span class="comment">// undefined</span></span><br><span class="line">test1.then(<span class="built_in">console</span>.log); <span class="comment">// 123</span></span><br><span class="line">test2.then(<span class="built_in">console</span>.log); <span class="comment">// 123 undefined</span></span><br><span class="line">test4.then(<span class="built_in">console</span>.log); <span class="comment">// then</span></span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>有的同学可能会说，咦，es6的 async 函数返回的那个是个函数，需要执行才能拿到结果，比如test0 应该是 test() 返回的是promise，但是模拟出来的怎么直接就拿到返回的promise了，其实很简单，你只要再用一个函数(比如myAsyncWrapper)把这个函数包装一下就ok~</p>
+</blockquote>
+<h5 id="到此，我们的模拟就结束了，现在让我们来尽情的实验一下"><a href="#到此，我们的模拟就结束了，现在让我们来尽情的实验一下" class="headerlink" title="到此，我们的模拟就结束了，现在让我们来尽情的实验一下~"></a>到此，我们的模拟就结束了，现在让我们来尽情的实验一下~</h5><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">myAsync(<span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">const</span> data1 = <span class="keyword">yield</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                res(<span class="number">1234</span>);</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"step 1"</span>); <span class="comment">// step 1</span></span><br><span class="line">            &#125;, <span class="number">1000</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">console</span>.log(data1); <span class="comment">// step 1 打印1s后 打印 123</span></span><br><span class="line">        <span class="keyword">const</span> data2 = <span class="keyword">yield</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                res(<span class="number">12342</span>);</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"step 2"</span>); <span class="comment">// step 2</span></span><br><span class="line">            &#125;, <span class="number">1000</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">console</span>.log(data2); <span class="comment">// step 2 打印1s后打印 12342</span></span><br><span class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="number">888</span>, err); </span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>完美啊有么有，再来试试reject</p>
+</blockquote>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">myAsync(<span class="function"><span class="keyword">function</span>*(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="keyword">yield</span> <span class="built_in">Promise</span>.reject(<span class="number">123</span>);</span><br><span class="line">        <span class="keyword">const</span> data1 = <span class="keyword">yield</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                res(<span class="number">1234</span>);</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"step 1"</span>);</span><br><span class="line">            &#125;, <span class="number">1000</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">console</span>.log(data1);</span><br><span class="line">        <span class="keyword">const</span> data2 = <span class="keyword">yield</span> <span class="keyword">new</span> <span class="built_in">Promise</span>(<span class="function"><span class="params">res</span> =&gt;</span> &#123;</span><br><span class="line">            setTimeout(<span class="function"><span class="params">()</span> =&gt;</span> &#123;</span><br><span class="line">                res(<span class="number">12342</span>);</span><br><span class="line">                <span class="built_in">console</span>.log(<span class="string">"step 2"</span>);</span><br><span class="line">            &#125;, <span class="number">1000</span>);</span><br><span class="line">        &#125;);</span><br><span class="line">        <span class="built_in">console</span>.log(data2);</span><br><span class="line">    &#125; <span class="keyword">catch</span> (err) &#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="number">888</span>, err); <span class="comment">// 888 123</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+<blockquote>
+<p>没问题直接输出了888 123</p>
+</blockquote>
+<h5 id="完美结束"><a href="#完美结束" class="headerlink" title="完美结束"></a>完美结束</h5><h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><h5 id="1-async-函数是generator-promise的语法糖，可能es6具体的实现一定有一定的优化和处理，但是个人觉得理论上偏差不大"><a href="#1-async-函数是generator-promise的语法糖，可能es6具体的实现一定有一定的优化和处理，但是个人觉得理论上偏差不大" class="headerlink" title="1.async 函数是generator+promise的语法糖，可能es6具体的实现一定有一定的优化和处理，但是个人觉得理论上偏差不大"></a>1.async 函数是generator+promise的语法糖，可能es6具体的实现一定有一定的优化和处理，但是个人觉得理论上偏差不大</h5><h5 id="2-想要用的得心应手还是建议去猜测和理解一下实现的原理"><a href="#2-想要用的得心应手还是建议去猜测和理解一下实现的原理" class="headerlink" title="2.想要用的得心应手还是建议去猜测和理解一下实现的原理"></a>2.想要用的得心应手还是建议去猜测和理解一下实现的原理</h5><h4 id="3-特此声明：以上内容基本都是模拟实现，并不是真实的实现原理，没有写测试，因此可能有漏洞的存在，欢迎各位大佬批评指正，希望大家能够共同进步"><a href="#3-特此声明：以上内容基本都是模拟实现，并不是真实的实现原理，没有写测试，因此可能有漏洞的存在，欢迎各位大佬批评指正，希望大家能够共同进步" class="headerlink" title="3.特此声明：以上内容基本都是模拟实现，并不是真实的实现原理，没有写测试，因此可能有漏洞的存在，欢迎各位大佬批评指正，希望大家能够共同进步~"></a>3.特此声明：以上内容基本都是模拟实现，并不是真实的实现原理，没有写测试，因此可能有漏洞的存在，欢迎各位大佬批评指正，希望大家能够共同进步~</h4><blockquote>
+<p><a href="https://github.com/jinggk/FrontEndCode/blob/master/async/demo.js" target="_blank" rel="noopener">代码demo传送门</a></p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/javascript/" rel="tag"># javascript</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/01/21/随笔/" rel="next" title="随笔">
+                <i class="fa fa-chevron-left"></i> 随笔
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/05/18/常见网络攻击/" rel="prev" title="常见网络攻击">
+                常见网络攻击 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Jing Guokai">
+          <p class="site-author-name" itemprop="name">Jing Guokai</p>
+           
+              <p class="site-description motion-element" itemprop="description">a blog</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">9</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#js的异步历史"><span class="nav-number">1.</span> <span class="nav-text">js的异步历史</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">我们都知道JavaScript是单线程的，避开了操作多线程的上锁和复杂的状态同步问题，单线程是无法充分利用cpu的，不过早期的JavaScript只是作为浏览器的脚本工具实现的，因此采用单线程是最方便最省事的，作为浏览器脚本语言，JavaScript的主要用途是与用户互动，以及操作DOM。它只能是单线程，否则会带来很复杂的同步问题。比如，假定JavaScript同时有两个线程，一个线程在某个DOM节点上添加内容，另一个线程删除了这个节点，这时浏览器应该以哪个线程为准？</span></a></li></ol></li></ol><li class="nav-item nav-level-2"><a class="nav-link" href="#水深火热的callback"><span class="nav-number">2.</span> <span class="nav-text">水深火热的callback</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#受制于单线程的原因，JavaScript在处理异步任务的时候就出现了比较尴尬的局面，比如AJAX请求，如果事情只能一件一件的来，当用户到服务器上去请求的时候，必须干等到结果回来才能继续后面的动作，这显而易见是不能被接受的，因此callback顺势而出，到后来的nodejs崛起，实现IO读取等异步的方式都是采用了callback的方式，也诞生了臭名昭著的callback-hell，场面开始失控…"><span class="nav-number">2.0.0.1.</span> <span class="nav-text">受制于单线程的原因，JavaScript在处理异步任务的时候就出现了比较尴尬的局面，比如AJAX请求，如果事情只能一件一件的来，当用户到服务器上去请求的时候，必须干等到结果回来才能继续后面的动作，这显而易见是不能被接受的，因此callback顺势而出，到后来的nodejs崛起，实现IO读取等异步的方式都是采用了callback的方式，也诞生了臭名昭著的callback hell，场面开始失控…</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#拯救callback的promise"><span class="nav-number">3.</span> <span class="nav-text">拯救callback的promise</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#es6将promise纳入了JavaScript的标准，promise代表着“承诺”，初始化了一个“承诺”之后，你只要在then中定义好这个承诺若是在未来达成要做什么事情，在catch中定义好这个承诺失败了需要做什么事情，就ok了"><span class="nav-number">3.0.0.1.</span> <span class="nav-text">es6将promise纳入了JavaScript的标准，promise代表着“承诺”，初始化了一个“承诺”之后，你只要在then中定义好这个承诺若是在未来达成要做什么事情，在catch中定义好这个承诺失败了需要做什么事情，就ok了</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#promise的出现完美的解救了callback的回调地狱，原因是promise允许链式调用，并且可以统一到最外层去做错误的catch"><span class="nav-number">3.0.0.2.</span> <span class="nav-text">promise的出现完美的解救了callback的回调地狱，原因是promise允许链式调用，并且可以统一到最外层去做错误的catch~</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#but-当我们认为promise就是JavaScript解决异步的最优方案的时候，ES2017-标准又引入了async-函数，使得异步操作变得更加方便"><span class="nav-number">3.0.1.</span> <span class="nav-text">but 当我们认为promise就是JavaScript解决异步的最优方案的时候，ES2017 标准又引入了async 函数，使得异步操作变得更加方便</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步终极利器async函数"><span class="nav-number">4.</span> <span class="nav-text">异步终极利器async函数</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#没错就在es6将promise加入标准后的不久，es7又新加入一种新的异步解决方案（号称终极解决方案）–-async函数"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">没错就在es6将promise加入标准后的不久，es7又新加入一种新的异步解决方案（号称终极解决方案）– async函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#假设有个异步函数"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">假设有个异步函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#好吧我们赶紧试试用async来实现"><span class="nav-number">4.0.0.3.</span> <span class="nav-text">好吧我们赶紧试试用async来实现</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#可以看到明显的看到，async的写法比promise的链式更舒服，它允许我们像写同步的语法一样去写嵌套的异步，实际的效果也会按照async-被-await-的顺序来运行，而且对开发最友好的是所有中间出现的错误都能被最外层的catch给捕获，所以说很多人都认为async将是js异步的终极解决方案，下面我们先来认识一下实现async的函数的一个基础函数，generator函数"><span class="nav-number">4.0.0.4.</span> <span class="nav-text">可以看到明显的看到，async的写法比promise的链式更舒服，它允许我们像写同步的语法一样去写嵌套的异步，实际的效果也会按照async 被 await 的顺序来运行，而且对开发最友好的是所有中间出现的错误都能被最外层的catch给捕获，所以说很多人都认为async将是js异步的终极解决方案，下面我们先来认识一下实现async的函数的一个基础函数，generator函数~</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#什么是generator"><span class="nav-number">5.</span> <span class="nav-text">什么是generator</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#既然generator可以暂停，如果我们每次遇到promise就暂停，等拿到promise-then-执行的结果在返回data，岂不是就是async函数的表现形式？dei，这确实就是async实现的基本原理，下面我们一起来手撸一个模拟async的函数–”myAsync”，盘它！"><span class="nav-number">5.0.0.1.</span> <span class="nav-text">既然generator可以暂停，如果我们每次遇到promise就暂停，等拿到promise.then()执行的结果在返回data，岂不是就是async函数的表现形式？dei，这确实就是async实现的基本原理，下面我们一起来手撸一个模拟async的函数–”myAsync”，盘它！</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#盘它"><span class="nav-number">6.</span> <span class="nav-text">盘它</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#那么，我们来完善边界情况的处理"><span class="nav-number">6.0.0.1.</span> <span class="nav-text">那么，我们来完善边界情况的处理</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#到此，我们的模拟就结束了，现在让我们来尽情的实验一下"><span class="nav-number">6.0.0.2.</span> <span class="nav-text">到此，我们的模拟就结束了，现在让我们来尽情的实验一下~</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#完美结束"><span class="nav-number">6.0.0.3.</span> <span class="nav-text">完美结束</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">7.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-async-函数是generator-promise的语法糖，可能es6具体的实现一定有一定的优化和处理，但是个人觉得理论上偏差不大"><span class="nav-number">7.0.0.1.</span> <span class="nav-text">1.async 函数是generator+promise的语法糖，可能es6具体的实现一定有一定的优化和处理，但是个人觉得理论上偏差不大</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-想要用的得心应手还是建议去猜测和理解一下实现的原理"><span class="nav-number">7.0.0.2.</span> <span class="nav-text">2.想要用的得心应手还是建议去猜测和理解一下实现的原理</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#3-特此声明：以上内容基本都是模拟实现，并不是真实的实现原理，没有写测试，因此可能有漏洞的存在，欢迎各位大佬批评指正，希望大家能够共同进步"><span class="nav-number">7.0.1.</span> <span class="nav-text">3.特此声明：以上内容基本都是模拟实现，并不是真实的实现原理，没有写测试，因此可能有漏洞的存在，欢迎各位大佬批评指正，希望大家能够共同进步~</span></a></li></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Jing Guokai</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
