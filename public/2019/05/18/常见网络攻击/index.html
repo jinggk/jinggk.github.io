@@ -5,7 +5,7 @@
   
 
 
-<html class="theme-next muse use-motion" lang>
+<html class="theme-next mist use-motion" lang="zh-Hans">
 <head><meta name="generator" content="Hexo 3.9.0">
   <meta charset="UTF-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -101,8 +101,8 @@
 <meta property="og:url" content="https://jinggk.github.io/2019/05/18/常见网络攻击/index.html">
 <meta property="og:site_name" content="Guokai Blog">
 <meta property="og:description" content="XSS 攻击 xss【cross site script】跨站脚本攻击，因为缩写和css相同，因此别名叫xss攻击  非持久性攻击  通过发送带恶意脚本参数的url给用户，诱骗用户进行点击，从而获取到用户的信息，特点是：难发现，即时性，需要进行诱点    持久性攻击  通过提交表单事件的时候，把恶意代码送入数据库，当前端读取的时候，从数据库中拿到并渲染执行，特点是：持久性，危害面广  防御方式：前">
-<meta property="og:locale" content="default">
-<meta property="og:updated_time" content="2019-06-20T03:12:43.096Z">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-20T06:41:10.798Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="常见网络攻击">
 <meta name="twitter:description" content="XSS 攻击 xss【cross site script】跨站脚本攻击，因为缩写和css相同，因此别名叫xss攻击  非持久性攻击  通过发送带恶意脚本参数的url给用户，诱骗用户进行点击，从而获取到用户的信息，特点是：难发现，即时性，需要进行诱点    持久性攻击  通过提交表单事件的时候，把恶意代码送入数据库，当前端读取的时候，从数据库中拿到并渲染执行，特点是：持久性，危害面广  防御方式：前">
@@ -113,14 +113,14 @@
   var NexT = window.NexT || {};
   var CONFIG = {
     root: '/',
-    scheme: 'Muse',
+    scheme: 'Mist',
     sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
     fancybox: true,
     tabs: true,
     motion: true,
     duoshuo: {
       userId: '0',
-      author: 'Author'
+      author: '博主'
     },
     algolia: {
       applicationID: '',
@@ -158,7 +158,7 @@
 
 </head>
 
-<body itemscope itemtype="http://schema.org/WebPage" lang="default">
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
 
   
   
@@ -206,7 +206,7 @@
             
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
-            Home
+            首页
           </a>
         </li>
       
@@ -216,17 +216,17 @@
             
               <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
             
-            Archives
+            归档
           </a>
         </li>
       
         
-        <li class="menu-item menu-item-tags">
-          <a href="/tags/" rel="section">
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
             
-              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
             
-            Tags
+            关于我
           </a>
         </li>
       
@@ -266,9 +266,9 @@
     <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2019/05/18/常见网络攻击/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Jing Guokai">
+      <meta itemprop="name" content="Guokai">
       <meta itemprop="description" content>
-      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="image" content="/images/avatar.jpeg">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
@@ -290,9 +290,9 @@
                 <i class="fa fa-calendar-o"></i>
               </span>
               
-                <span class="post-meta-item-text">Posted on</span>
+                <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-05-18T18:09:30+08:00">
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-05-18T18:09:30+08:00">
                 2019-05-18
               </time>
             
@@ -423,6 +423,30 @@
     
 
     
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Guokai WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
 
     
 
@@ -509,20 +533,20 @@
       
         <ul class="sidebar-nav motion-element">
           <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            Table of Contents
+            文章目录
           </li>
           <li class="sidebar-nav-overview" data-target="site-overview">
-            Overview
+            站点概览
           </li>
         </ul>
       
 
       <section class="site-overview sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-          <img class="site-author-image" itemprop="image" src="/images/avatar.gif" alt="Jing Guokai">
-          <p class="site-author-name" itemprop="name">Jing Guokai</p>
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="Guokai">
+          <p class="site-author-name" itemprop="name">Guokai</p>
            
-              <p class="site-description motion-element" itemprop="description">a blog</p>
+              <p class="site-description motion-element" itemprop="description">个人博客</p>
           
         </div>
         <nav class="site-state motion-element">
@@ -531,7 +555,7 @@
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
                 <span class="site-state-item-count">9</span>
-                <span class="site-state-item-name">posts</span>
+                <span class="site-state-item-name">日志</span>
               </a>
             </div>
           
@@ -544,7 +568,7 @@
             <div class="site-state-item site-state-tags">
               
                 <span class="site-state-item-count">4</span>
-                <span class="site-state-item-name">tags</span>
+                <span class="site-state-item-name">标签</span>
               
             </div>
           
@@ -605,18 +629,18 @@
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Jing Guokai</span>
+  <span class="author" itemprop="copyrightHolder">Guokai</span>
 </div>
 
 
 <div class="powered-by">
-  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
 </div>
 
 <div class="theme-info">
-  Theme -
+  主题 -
   <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
-    NexT.Muse
+    NexT.Mist
   </a>
 </div>
 
