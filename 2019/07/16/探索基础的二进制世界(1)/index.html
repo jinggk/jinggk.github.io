@@ -1,0 +1,930 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="计算机基础,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="序言最近在看一点关于计算机编程基础的内容，在讲到汇编被转为更底层的机器码的过程中忽然对2进制的一些内容感到很疑惑，一直以来对这块的内容只有在学校的时候有接(听)触(说)过，话不多说，带着几个问题，站在大佬们的基础上，做一个简单的解释和总结。 计算机为什么要用2进制来运算使用2进制的计算对实现计算机来说不是一个充分必要条件，理想条件下可以有N进制的cpu，但是考虑以下问题：  物理实现复杂度：如果用">
+<meta name="keywords" content="计算机基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索二进制的世界(1)">
+<meta property="og:url" content="https://jinggk.github.io/2019/07/16/探索基础的二进制世界(1)/index.html">
+<meta property="og:site_name" content="Guokai Blog">
+<meta property="og:description" content="序言最近在看一点关于计算机编程基础的内容，在讲到汇编被转为更底层的机器码的过程中忽然对2进制的一些内容感到很疑惑，一直以来对这块的内容只有在学校的时候有接(听)触(说)过，话不多说，带着几个问题，站在大佬们的基础上，做一个简单的解释和总结。 计算机为什么要用2进制来运算使用2进制的计算对实现计算机来说不是一个充分必要条件，理想条件下可以有N进制的cpu，但是考虑以下问题：  物理实现复杂度：如果用">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-11-14T01:06:12.212Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索二进制的世界(1)">
+<meta name="twitter:description" content="序言最近在看一点关于计算机编程基础的内容，在讲到汇编被转为更底层的机器码的过程中忽然对2进制的一些内容感到很疑惑，一直以来对这块的内容只有在学校的时候有接(听)触(说)过，话不多说，带着几个问题，站在大佬们的基础上，做一个简单的解释和总结。 计算机为什么要用2进制来运算使用2进制的计算对实现计算机来说不是一个充分必要条件，理想条件下可以有N进制的cpu，但是考虑以下问题：  物理实现复杂度：如果用">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jinggk.github.io/2019/07/16/探索基础的二进制世界(1)/">
+
+
+
+
+
+  <title>探索二进制的世界(1) | Guokai Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Guokai Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">shanbay frontend engineer</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2019/07/16/探索基础的二进制世界(1)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Guokai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guokai Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">探索二进制的世界(1)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-07-16T16:25:20+08:00">
+                2019-07-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h2><p>最近在看一点关于计算机编程基础的内容，在讲到汇编被转为更底层的机器码的过程中忽然对2进制的一些内容感到很疑惑，一直以来对这块的内容只有在学校的时候有接(听)触(说)过，话不多说，带着几个问题，站在大佬们的基础上，做一个简单的解释和总结。</p>
+<h2 id="计算机为什么要用2进制来运算"><a href="#计算机为什么要用2进制来运算" class="headerlink" title="计算机为什么要用2进制来运算"></a>计算机为什么要用2进制来运算</h2><p>使用2进制的计算对实现计算机来说不是一个充分必要条件，理想条件下可以有N进制的cpu，但是考虑以下问题：</p>
+<ol>
+<li>物理实现复杂度：如果用2进制的话门电路的导通与截止，电压的高压与低压，都可以完美的表示2进制的所有数字0和1，如果是10进制，实现0-9这10个稳定状态的电路和电压，是比较困难的，不过已经有人在研究3进制计算机了~</li>
+<li>运算实现复杂度：对N进制的求和或者求积各有N(N+1)/2种，对于2进制来说就是2*3/2=3种，比如加法，分别是<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0</span> + <span class="number">0</span> = <span class="number">0</span>;</span><br><span class="line"><span class="number">0</span> + <span class="number">1</span> = <span class="number">1</span>;</span><br><span class="line"><span class="number">0</span> + <span class="number">1</span> = <span class="number">10</span>;</span><br></pre></td></tr></table></figure>
+
+</li>
+</ol>
+<p>如果换成10进制的话，就会有10*11/2 = 55种，这对于计算机的实现来说也是相当复杂的。</p>
+<ol start="3">
+<li>电路的0，1可以想象成没电和有电，这种条件下电路的稳定性是比较可靠的，如果化成10份，抗干扰能力急剧下降，会出现不合预期的干扰情况，因此鉴于机器的可靠性，2进制是最优的解。</li>
+<li>最后就是逻辑判断非常方便，1是true 0是false，非常自然</li>
+</ol>
+<p>当然有优点就一定有缺点，缺点就是2进制的书写是非常不方便的，可读性也很差，这也是很多语言为什么会需要汇编来做一个中间过程<del>，起码汇编的可读性比2进制强很多，另外基于汇编还可以做一些代码的优化</del></p>
+<p>综合而言，2进制天生符合计算机的脾气~</p>
+<h2 id="计算机怎么计算1-1的？"><a href="#计算机怎么计算1-1的？" class="headerlink" title="计算机怎么计算1-1的？"></a>计算机怎么计算1-1的？</h2><p>这是个展示人类先进思维的地方，首先，我们需要知道一点，二进制的计算过程没有减法，比如计算1-1 会被转化成 1+(-1)，实现一个减法的过程不是不可以，而是对计算机的成本太大，代价也很大，尤其要考虑到减数，被减数，以及结果的正负，转换成加上一个负数，可以统一计算过程，大大减小了计算的复杂性。</p>
+<p>我们以8位的二进制数字来解释，伟大的计算机先人们为了解决正负数的问题，把一个二进制的首位定义为一个数字的正负，所以 1 的二进制原码是 0000 0001，-1的二进制原码是 1000 0001；当正真开始计算的时候，问题出现了：</p>
+<table>
+<thead>
+<tr>
+<th>十进制</th>
+<th>二进制原码</th>
+<th>计算结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0000 0001</td>
+<td></td>
+</tr>
+<tr>
+<td>-1</td>
+<td>1000 0001</td>
+<td></td>
+</tr>
+<tr>
+<td>操作</td>
+<td>加法</td>
+<td>1000 0010</td>
+</tr>
+</tbody></table>
+<p><strong>二进制原码：原码是指将最高位作为符号位(0表示正，1表示负)，其它数字位代表数值本身的绝对值的数字表示方式。</strong></p>
+<p>what，惊人的发现结果是十进制的-2，这不是想要的结果，同时因为首位数字是符号位的原因，会导致2个0，0000 0000代表+0，1000 0000 代表-0，基于以上的问题，伟大的先人们发明了反码，反码：<strong>如果是正数，则表示方法和原码一样；如果是负数，符号位不变，其余各位取反，则得到这个数字的反码表示形式</strong>，有了反码，我们可以看看可以解决哪些问题：</p>
+<table>
+<thead>
+<tr>
+<th>十进制</th>
+<th>二进制原码</th>
+<th>二进制反码</th>
+<th>计算结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0000 0001</td>
+<td>0000 0001</td>
+<td></td>
+</tr>
+<tr>
+<td>-1</td>
+<td>1000 0001</td>
+<td>1111 1110</td>
+<td></td>
+</tr>
+<tr>
+<td>操作</td>
+<td></td>
+<td>加法</td>
+<td>1111 1111</td>
+</tr>
+</tbody></table>
+<p>1111 1111 按照反码的格式，翻译过来就是10进制中的-0，因为 1000 0000 的反码就是 1111 1111，所以通过反码的形式，先人们完美的解决了 1 + (-1) = 0的问题，但是上面说到还有一个问题，+0 和 -0 这个现象依然存在，就像坏了一锅汤的老鼠一样，伟大的先人们的智慧当然不允许这种情况的存在，于是乎，有人创造了 补码，补码：<strong>如果是整数，则表示方法和原码一样；如果是负数，则将数字的反码加上1(相当于将原码数值位取反然后在最低位加1</strong></p>
+<p>有了补码之后，1的补码是：0000 0001， -1的补码是 1111 1111 当我们去相加的时候：</p>
+<table>
+<thead>
+<tr>
+<th>十进制</th>
+<th>二进制原码</th>
+<th>二进制反码</th>
+<th>二进制反码</th>
+<th>计算结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0000 0001</td>
+<td>0000 0001</td>
+<td>0000 0001</td>
+<td></td>
+</tr>
+<tr>
+<td>-1</td>
+<td>1000 0001</td>
+<td>1111 1110</td>
+<td>1111 1111</td>
+<td></td>
+</tr>
+<tr>
+<td>操作</td>
+<td></td>
+<td></td>
+<td>加法</td>
+<td>(1)0000 0000</td>
+</tr>
+</tbody></table>
+<p>在反码的基础上，补了一位之后，我们发现结果正是我们想要的，而且不会有-0的出现了，但是有得必有失，我们丢了-0，但是我们获取了-128，为啥？-0 的补码是 1000 0000 所以，<strong>先人前辈们把这个补码定义成了当前补码范围内可以表示的最小的负整数，8位的二进制就是-128</strong>，这也是为啥8位二进制表示的数字范围是[-128, 127]的原因，-0 丢了，但是加了一个-128，现在我们通过补码的形式把这个坏老鼠成功的剔除掉了，一切的计算看起来都是那么的完美~</p>
+<p>现在我们完整的走一次计算过程，以1-2=-1来实现：</p>
+<table>
+<thead>
+<tr>
+<th>十进制</th>
+<th>二进制补码</th>
+<th>计算结果</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0000 0001</td>
+<td></td>
+</tr>
+<tr>
+<td>-2</td>
+<td>1111 1110</td>
+<td></td>
+</tr>
+<tr>
+<td>操作</td>
+<td>加法</td>
+<td>1111 1111</td>
+</tr>
+</tbody></table>
+<p>结果是负数，所以想知道它具体是多少需要通过补码来查看，所以 1111 1111的补码是 1000 0001 就是十进制的-1</p>
+<blockquote>
+<p>为什么对负数结果要求补码？<br>其实我们运算的过程就是用的补码，那么理论上应该是反补码才能拿到实际的数据，but but 这里为什么正向求补码了？这就是二进制非常神奇的地方，一个二进制的原码的补码的补码就是 —–&gt; 这个原码本身，正数因为补码永远是自己，所以肯定是成立的，兑入负数，验证如下：<br>1000 0001 求补 1111 1111<br>1111 1111 求补 1000 0001 </p>
+</blockquote>
+<p><strong>所以，对于计算机来说运算之前求一次补码，运算之后再求一次补码，就可以拿到正确的结果拉，一切都是那么的自然。。</strong></p>
+<p>不好理解？放2个图，让你一眼就看明白<br>// <a href="https://pic4.zhimg.com/80/v2-359c72c3a8e300046ada8e6d718da24b_hd.jpg" target="_blank" rel="noopener">https://pic4.zhimg.com/80/v2-359c72c3a8e300046ada8e6d718da24b_hd.jpg</a></p>
+<p>// <a href="https://pic2.zhimg.com/80/v2-b7291eaf983e2c0a3077784ded5649dd_hd.jpg" target="_blank" rel="noopener">https://pic2.zhimg.com/80/v2-b7291eaf983e2c0a3077784ded5649dd_hd.jpg</a></p>
+<p>// <a href="https://pic3.zhimg.com/80/v2-f626697aa9768d43974657c7f06b3e5e_hd.jpg" target="_blank" rel="noopener">https://pic3.zhimg.com/80/v2-f626697aa9768d43974657c7f06b3e5e_hd.jpg</a></p>
+<p>如果看不明白的话，请查看原作者的解释，在<a href="https://zhuanlan.zhihu.com/p/36036038" target="_blank" rel="noopener">这里</a></p>
+<p>现在我们都学到了，原来正真在最底层吭哧吭哧进行运算的，都是2进制补码~</p>
+<h2 id="为什么会溢出？"><a href="#为什么会溢出？" class="headerlink" title="为什么会溢出？"></a>为什么会溢出？</h2><p>理论上N位二进制所能表达的数字一定是有限的，比如8位二进制的范围就是[-128, 127]，当计算到127的时候，+1 就会”跳”到-128，就像一个圆圈一样，一切都回到了原点重新开始，只是这个临界点不是“0”而是“127”和“-128”，所以，溢出是一定会出现的，当计算结果超出当前range范围，就会产生溢出的行为，理解这个行为，我们要先理解“模”这个概念；</p>
+<p>假如给一个钟表，因为钟表的范围一共就是12个格子，所以“12”就是它的“模”，超过12就会重新计算，这种现象，就是“溢出”，在看下面的例子：假如现在时针在2点的位置，如果我想要他变为6点，有几种办法，理论上有N种，我可以不停的旋转然后再回来，我们讨论最基本的，其实是2种，正向走过4个格子，到6，这就是 2 + 4 = 6；还可以反向走 8 个格子，[2&gt;1&gt;12&gt;11&gt;10&gt;9&gt;8&gt;7&gt;6] ，会发现一个绝妙的点：<strong>4+8=12</strong>，同时，4和8就是对于“模”12的一对补数，在钟表上我们可以看出来2-8==2+4 往后退8个就等于往前走4个，也就是说，在“模”运算中，x-y==x+y的补数，回到二进制，二进制的计算和钟表的计算是非常像的，8位二进制的“模”就是256，从[0-127]以及[-1,-128]，各有128位数字，到达临界点的时候就会break到下一个原始的点，比如从-128 再走就回到 +127，从+127再走就到了-128，这些在计算上的表现就是低位进位导致高位溢出，所以符号位就是不断的被“取反”，丢掉的高位，就好比是时钟走完了一圈，进入下一圈后上一圈就没了，同样，补码的设计，就实现了减法变成加法的运算，比如我们在计算127+1,补码运算得到的结果是-128，二进制的 1000 0000，那么实际的值就是结果的补码，对-128的补码，就是用“模”-|-128|(注意：这里的补数计算，一定是绝对值，正数就是正数本身，负数，就是绝对值)，就等于256-128 = 128，所以127 + 1 = 128</p>
+<p>然后，我们用一段c++代码来看下这个答案：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> a, b;</span><br><span class="line">    <span class="keyword">char</span> c;</span><br><span class="line"></span><br><span class="line">    a = <span class="number">127</span>;</span><br><span class="line">    b = <span class="number">1</span>;</span><br><span class="line">    c = a + b;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"c=%d"</span>, c);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出是-128，这是因为，8位我们知道最大能表示的正数是127，128当然无法表示了，因此会从127 跳到下一位，发生一次符合的转换，就是-128，这个溢出导致的结果会引起无法预期的bug，如果我们把c的长度换位16位的二进制：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">void</span>)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> a, b;</span><br><span class="line">    <span class="keyword">short</span> c;</span><br><span class="line"></span><br><span class="line">    a = <span class="number">127</span>;</span><br><span class="line">    b = <span class="number">1</span>;</span><br><span class="line">    c = a + b;</span><br><span class="line"></span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"c=%d"</span>, c);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出就是 128~</p>
+<p>所以在有位数限制的语言中，一定要注意计算溢出的问题~</p>
+<h2 id="二进制的乘除"><a href="#二进制的乘除" class="headerlink" title="二进制的乘除"></a>二进制的乘除</h2><h3 id="二进制乘法"><a href="#二进制乘法" class="headerlink" title="二进制乘法"></a>二进制乘法</h3><p>从上面的描述我们知道了二进制只有加法，没有减法，那么有的小伙伴肯定会有疑问了，减法都没有，那乘法怎么办？我们看看计算机通过二进制是怎么解决乘法问题的：</p>
+<p>从我们已知的十进制说起，假设我有一个数字900.000，我现在想对900做乘法，算900<em>10=？ 从我们接触小数点的时候，老师应该都说过，遇到</em>10的情况，我们就数一下乘数有几个0，1后面几个0就把小数点往右边移动几位，所以这里我们把小数点往后移动一位，结果就是9000.00，现在我们忽略小数点，和后面的0，发现乘以10的过程，实际就是把900全部左移了一位，最后补了一个0，对吧，也就是每次的左移1位代表对被乘数乘以10，右移一位就表示除以10~</p>
+<p>回到二进制的世界，理论都是一样的，只是逢十变成了逢二而已，但是巧就巧在，10进制中我们的乘数可能不是10的整数次幂，<strong>但是二进制情况下，所有的数字都是2的整数次幂</strong>，比如我有一个二进制的数据 0000 0001 乘以 10 (注意，10是十进制的2)，那就把被乘数所有的数字全部往左移动一位，就代表乘以2没问题，所以结果就是0000 0010 高位舍去，低位补0~，所有的二进制的复杂乘法都是通过这个方式(移位+加法)来实现的，我们看个比较复杂的例子：</p>
+<p>1111 * 111</p>
+<p>首先，乘数 111 分别表示是2º、2¹、2²，什么意思，就好比十进制的9 * 110 可以分解为 9 * 10¹ + 9 * 10²，对应就是9向左移位90 + 9向左移2位900 = 990，同理，对于二进制来说 0就是不移位，那就是1111，1表示左移移位，就是11110 ，2就是左移2位，就是111100，然后计算二进制加法</p>
+<p>加法计算：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+</tr>
+<tr>
+<td>0</td>
+<td>1</td>
+<td>1</td>
+<td>0</td>
+<td>1</td>
+<td>0</td>
+<td>0</td>
+<td>1</td>
+</tr>
+</tbody></table>
+<p>得到结果 0110 1001 转化为10进制就是：</p>
+<p>15 * 5 = 105</p>
+<p>完美，所以可以看到整个计算过程都是通过移位+加法来解决问题的，所以，现在你应该知道为什么面试中问你计算2³最快的方式是2&lt;&lt;2了吗？</p>
+<h3 id="二进制除法"><a href="#二进制除法" class="headerlink" title="二进制除法"></a>二进制除法</h3><p>除法的运算相对复杂和耗时一些，还是以10进制的计算过程为例：</p>
+<p>计算 19 / 3 = ？</p>
+<p>因为我没有乘除，只能用加法来解决问题，但是我知道除数和被除数，那么，我先用一个除数和被除数比，发现 3 &lt; 19，那么给我的除数再加上一个除数，一直继续,整体过程就是<br>3 &lt; 19 商 + 1  当前中间计算结果 3<br>6 &lt; 19 商 + 1  当前中间计算结果 6<br>9 &lt; 19 商 + 1  当前中间计算结果 9<br>12 &lt; 19 商 + 1 当前中间计算结果 12<br>15 &lt; 19 商 + 1 当前中间计算结果 15<br>18 &lt; 19 商 + 1 当前中间计算结果 18<br>21 &gt; 19 停止 此时商从0变为 6 余数为 19 - 18（中间数）= 1</p>
+<p>计算得出余数为1 商为6 返回计算结果~</p>
+<p>其实就是不停的累加除数的过程，一直到找到第一次累加之和超过被除数的上一次为止~，剩下的就是余数</p>
+<p>当然，换做二进制，流程是一样的，只是都用二进制去计算<del>，我就不细说了，除法还是比较麻烦的，需要用到至少4个寄存器，存放除数，被除数，中间数，以及商，最后的余数就直接用被除数-中间数就可以了</del></p>
+<p>所以，尽量能用位移，不用加减，能用加减不用乘除，能用乘法，不用除法~</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><ol>
+<li>二进制都是以补码的方式在底层做运算；</li>
+<li>有限范围内的计算溢出会导致不可预期的结果，</li>
+<li>8位的-128是先人们智慧的结晶，当然还有16位的-xx，以及32位的-xx等等</li>
+<li>计算机的世界，没有减乘除，只有加法~</li>
+</ol>
+<blockquote>
+<p>本文有一些内容是总结和引用，有一些是笔者自己的理解，如有错误，请海涵并指出~
+不针对浮点数的运算，因为运算方式完全不同于整数<br>二进制非常简单，但是又非常的绝妙，如果能仔细体会的话<br>如果以上内容对你有点帮助，希望可以给个赞<br>后续可能会再总结一下为何0.1+0.2!=0.3的问题~</p>
+</blockquote>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Guokai WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/计算机基础/" rel="tag"># 计算机基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/06/13/前端框架的趋势-hook入门/" rel="next" title="前端框架的趋势-hook入门">
+                <i class="fa fa-chevron-left"></i> 前端框架的趋势-hook入门
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/09/05/探索二进制的世界(2)/" rel="prev" title="探索二进制的世界(2)">
+                探索二进制的世界(2) <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="Guokai">
+          <p class="site-author-name" itemprop="name">Guokai</p>
+           
+              <p class="site-description motion-element" itemprop="description">个人博客</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算机为什么要用2进制来运算"><span class="nav-number">2.</span> <span class="nav-text">计算机为什么要用2进制来运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#计算机怎么计算1-1的？"><span class="nav-number">3.</span> <span class="nav-text">计算机怎么计算1-1的？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为什么会溢出？"><span class="nav-number">4.</span> <span class="nav-text">为什么会溢出？</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#二进制的乘除"><span class="nav-number">5.</span> <span class="nav-text">二进制的乘除</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#二进制乘法"><span class="nav-number">5.1.</span> <span class="nav-text">二进制乘法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#二进制除法"><span class="nav-number">5.2.</span> <span class="nav-text">二进制除法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">6.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Guokai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

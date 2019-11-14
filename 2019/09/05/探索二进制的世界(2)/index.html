@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="计算机基础,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="序言之前简单介绍了二进制下整数的加减乘除基本运算，这一节，一起探索一下浮点数的在二进制中是怎么进行基本运算的 打开chrome控制台，给一个特别简单的输入如下： 10.1 + 0.2  // 0.30000000000000004  10.1 + 0.2  // 0.30000000000000004  不知道你有没有吃惊，这么简单的一个计算，无论在js中还是在python中，都不是准确的0.3，">
+<meta name="keywords" content="计算机基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="探索二进制的世界(2)">
+<meta property="og:url" content="https://jinggk.github.io/2019/09/05/探索二进制的世界(2)/index.html">
+<meta property="og:site_name" content="Guokai Blog">
+<meta property="og:description" content="序言之前简单介绍了二进制下整数的加减乘除基本运算，这一节，一起探索一下浮点数的在二进制中是怎么进行基本运算的 打开chrome控制台，给一个特别简单的输入如下： 10.1 + 0.2  // 0.30000000000000004  10.1 + 0.2  // 0.30000000000000004  不知道你有没有吃惊，这么简单的一个计算，无论在js中还是在python中，都不是准确的0.3，">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://i.loli.net/2019/09/03/teEvcx6nN5rOUK3.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/09/03/nwg518s4S7rdlKC.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/09/03/fxG4QBeYMojs5p6.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/09/03/pn6m2wgrASejfKh.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/09/03/KLu8an3qr5MFYIT.jpg">
+<meta property="og:image" content="https://i.loli.net/2019/09/03/iLvNhRj6gQ2WaKC.jpg">
+<meta property="og:updated_time" content="2019-11-14T01:06:08.800Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="探索二进制的世界(2)">
+<meta name="twitter:description" content="序言之前简单介绍了二进制下整数的加减乘除基本运算，这一节，一起探索一下浮点数的在二进制中是怎么进行基本运算的 打开chrome控制台，给一个特别简单的输入如下： 10.1 + 0.2  // 0.30000000000000004  10.1 + 0.2  // 0.30000000000000004  不知道你有没有吃惊，这么简单的一个计算，无论在js中还是在python中，都不是准确的0.3，">
+<meta name="twitter:image" content="https://i.loli.net/2019/09/03/teEvcx6nN5rOUK3.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://jinggk.github.io/2019/09/05/探索二进制的世界(2)/">
+
+
+
+
+
+  <title>探索二进制的世界(2) | Guokai Blog</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Guokai Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">shanbay frontend engineer</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于我
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://jinggk.github.io/2019/09/05/探索二进制的世界(2)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Guokai">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.jpeg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Guokai Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">探索二进制的世界(2)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-05T21:35:10+08:00">
+                2019-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="序言"><a href="#序言" class="headerlink" title="序言"></a>序言</h3><p>之前简单介绍了二进制下整数的加减乘除基本运算，这一节，一起探索一下浮点数的在二进制中是怎么进行基本运算的</p>
+<p>打开chrome控制台，给一个特别简单的输入如下：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span> + <span class="number">0.2</span>  <span class="comment">// 0.30000000000000004</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">0.1</span> + <span class="number">0.2</span>  // <span class="number">0.30000000000000004</span></span><br></pre></td></tr></table></figure>
+
+<p>不知道你有没有吃惊，这么简单的一个计算，无论在js中还是在python中，都不是准确的0.3，这是为什么呢？</p>
+<h3 id="缘起"><a href="#缘起" class="headerlink" title="缘起"></a>缘起</h3><p>要了解这个问题，首先我们需要知道浮点数在计算机中到底是如何进行存储的？不知道你是怎么想的，总之我开始的第一反应就是假设是32位的存储空间，我可能会按照整数的存储方式去想象，比如1-24位是整数位，剩余的8位代表小数，这样可以吗？当然是可以的，但是先考虑下下面的这个问题：</p>
+<p><img src="https://i.loli.net/2019/09/03/teEvcx6nN5rOUK3.jpg" alt="1567472925784.jpg"></p>
+<p>想象这个白板是所能放置的数字的最大空间，现在有个问题，当我们想继续加0的时候，发现放不下了，因为空间是有限的，这个时候，我们会怎么办？</p>
+<p><img src="https://i.loli.net/2019/09/03/nwg518s4S7rdlKC.jpg" alt="1567473380368.jpg"></p>
+<p>对，没错，科学计数法，就是我们在学习过程中，如果位数太多，我们一般都会用科学计数法来表示，这样的好处是，书写的位数小，表示的位数多，所以，回到计算机中，32位来表示实数的话，最多能表示多少位？2^32次方个，大约就是40亿，40亿数字很多吗？多，但是和无限多的实数集来比，沧海一粟，不够看的，所以计算机的设计者就要考虑这个问题了，如何让计算放下更多的数字？</p>
+<h3 id="真的有“定点数”"><a href="#真的有“定点数”" class="headerlink" title="真的有“定点数”"></a>真的有“定点数”</h3><p>还记得上面说的，1-24表示整数位，剩余的表示小数位吗？这种存储方式就叫定点数，1-24位每4位表示一个0~9的数字的话，可以有6位表示整数部分，剩余2位表示小数部分，这样我们可以用32位表示从0到999999.99这样1亿个实数，这种用2进制来表示10进制的方式，叫做<a href="https://zh.wikipedia.org/wiki/%E4%BA%8C%E9%80%B2%E7%A2%BC%E5%8D%81%E9%80%B2%E6%95%B8" target="_blank" rel="noopener"><strong>BCD编码</strong>（Binary-Coded Decimal）</a>，比如说8421码，从左往右的权依次是8，4，2，1，等等，有兴趣的可以去了解一下。</p>
+<h3 id="“定点数”存在哪些问题"><a href="#“定点数”存在哪些问题" class="headerlink" title="“定点数”存在哪些问题"></a>“定点数”存在哪些问题</h3><p>定点数有几个明显的缺点：</p>
+<ul>
+<li>占了很大的位数，但是能表示的数字范围却是有限的；</li>
+<li>无法同时表示很大的数字和很小的数字</li>
+</ul>
+<p>其实究其根本原因，还是这种方式的“有限”限制了它，那么有没有一种方式，可以让32位所能表示的数字，更“无限”一点，更适合我们的诉求？</p>
+<p>当然，设计计算机的前辈智慧是无限的~</p>
+<h3 id="浮点数是如何表示的"><a href="#浮点数是如何表示的" class="headerlink" title="浮点数是如何表示的"></a>浮点数是如何表示的</h3><p>就像使用科学计数法一样，计算机前辈在浮点数的设计中也用了一样的思想，IEEE的标准定义了2个基本的浮点数格式，一个是32位的单精度浮点数，一个是64位的双精度浮点数，也就是float或float32和double或float64这两个数据格式，双精度和单精度的表示形式是差不多的，我们以单精度的作为了解和学习。</p>
+<p><img src="https://i.loli.net/2019/09/03/fxG4QBeYMojs5p6.jpg" alt="123.jpg"></p>
+<p>分为3部分：</p>
+<ol>
+<li>第一部分是<strong>符号位</strong>，用s表示，代表正负，要记住的是在浮点数的范围内，所有数字都是有符号的；</li>
+<li>第二部分是<strong>指数位</strong>，用e表示，代表指数，用8位bit表示的数字范围是0<del>255，为了同时表示大数和小数，我们把0</del>255去掉头尾（0，255后面会用到）的1<del>254去映射到-126</del>127，这样同时可以表示最大最小数字；</li>
+<li>第三部分是<strong>有效数位</strong>，用f表示，代表的是有效的数位；</li>
+</ol>
+<p>综合上述表示和科学计数法，我们的浮点数就可以表示为公式</p>
+<p><strong>(-1)^s * 1.f * 2^e</strong></p>
+<p>看完公式有没有发现问题？你会发现，我们这个公式无法表示0，的确，这是一个巧妙的设计，我们用0（8个bit都为0）和255（8个bit都为1）来表示一些特殊的数值，可以认为他们2个是特殊的flag位，比如当e和f都为0的时候，我们就认为这个浮点数是0，看下表：</p>
+<p><img src="https://i.loli.net/2019/09/03/pn6m2wgrASejfKh.jpg" alt="f922249a89667c4d10239eb8840dc94c.jpg"></p>
+<p>以0.5为例，0.5的符号位s是0，f也是0，e是-1，这样(-1)^0 * 1.0 * 2 ^ -1 = 0.5</p>
+<p>用32位bit表示就是</p>
+<table>
+<thead>
+<tr>
+<th>s</th>
+<th>e</th>
+<th>f</th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0</td>
+<td>0111 1110</td>
+<td>0000 …0</td>
+<td></td>
+</tr>
+<tr>
+<td>1位</td>
+<td>8位</td>
+<td>23位</td>
+<td>0.5</td>
+</tr>
+</tbody></table>
+<p>通过这样的表示方式，可以明显的发现32位所能表示的实数范围是很大的，又因为这种方式创建的实数中小数点的位置是可以”浮动“的，所以也被叫做浮点数，</p>
+<p>到这里我们知道了浮点数是怎么存储的了，但是还没解决我们开始的问题，为何0.1+0.2!=0.3，首先我们要知道0.1是怎么存储的：</p>
+<p>(-1)^s * 1.f * 2^e = 0.1</p>
+<p>求解e</p>
+<p>s=0 f=0 e=Math.log2(0.1) // -3.321928094887362</p>
+<p>可以看出来这里0.1是算不出来一个准确数字的，从0.1到0.9只有0.5是可以求出一个准确的值的，剩下的都算不出来一个准确的值，这也就是为什么0.1+0.2会导致的精度问题，也就是说浮点数无论是表示还是计算其实都是近似计算，而近似计算就一定会导致一些问题，比如，你希望银行给你存钱以及算利息的时候用浮点数计算吗？当然不希望，否则你的钱算多了还好，算少了岂不是亏大了~</p>
+<h3 id="浮点数-amp-二进制"><a href="#浮点数-amp-二进制" class="headerlink" title="浮点数&amp;二进制"></a>浮点数&amp;二进制</h3><p>把一个二进制表示的浮点数（0.1001），转为10进制表示，因为小数点后的每一位都表示的是2的-N次方，因此转为10进制就是：</p>
+<p>(1 * 2 ^ -1) + (0 * 2 ^ -2) + (0 * 2 ^ -3) + (1 * 2 ^ -4) = 0.5625</p>
+<p>可以理解为，对于二进制转十进制来说，从小数点开始，往左就是把2的指数从0开始过一位+1，包括0，往右就是从-1开始依次-1。</p>
+<p>把一个10进制的浮点数，转为二进制的话，和整数的二进制表示采用“除以 2，然后看余数”的方式相比，小数部分转换是用一个相似的反方向操作，就是乘以2，然后看是否大于1，如果大于1就记下1并把结果减去1，一直重复操作。</p>
+<p>比如，十进制的9.1，小数部分0.1转为2进制的过程为：</p>
+<p><img src="https://i.loli.net/2019/09/03/KLu8an3qr5MFYIT.jpg" alt="f9213c43f5fa658a2192a68cd26435ae.jpg"></p>
+<p>这是得到一个无限循环的部分”0011“，整数部分9转为二进制就是1001，因此结果就是1001.000110011…</p>
+<p>把小数点做移3位，得到一个浮点数的结果是 1.001000110011… * 2 ^ 3</p>
+<p>找到我们上面的公式 (-1)^s * 1.f * 2^e  套公式可得到：</p>
+<p>s = 0 f = 00100011001100110011 001(<strong>到23位后自动舍弃，因为最长只能放23位有效数字</strong>) </p>
+<p>指数位是3，我们e的范围是1-254 对半分正数和负数，所以127表示0，从127开始加3，得到结果是130，130转为二进制表示结果就是： 1000 0010， 所以得到e=1000 0010, 结果如下：</p>
+<p><img src="https://i.loli.net/2019/09/03/iLvNhRj6gQ2WaKC.jpg" alt="9ace5a7404d1790b03d07bd1b3cb5a27.jpeg"></p>
+<p>所以最终的二进制表示结果是： 0100 0001 0001 0001 1001 1001 1001 1001</p>
+<p>如果我们再把这个浮点数表示换算成十进制， 实际得到的准确值是 9.09999942779541015625。相信你现在应该不会感觉奇怪了。</p>
+<h3 id="小心你的“存款”"><a href="#小心你的“存款”" class="headerlink" title="小心你的“存款”"></a>小心你的“存款”</h3><p>首先，我们了解一下浮点数的加法计算过程是怎么样的，拿0.5 + 0.125来做计算，首先0.5套用公式计算结果是：</p>
+<p>s = 0  有效位1.f = 1.0000… e = -1;</p>
+<p>0.125 转换为：</p>
+<p>s = 0 有效位1.f = 1.0000… e = -3;</p>
+<p>然后，计算口诀是 指数位先对齐(小转大，这里要把e统一为-1)， 然后按位相加符号位和有效位，e保持统一后的结果，因此：</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>符号位s</th>
+<th>指数位e</th>
+<th>有效位1.f</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0.5</td>
+<td>0</td>
+<td>-1</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>0.125</td>
+<td>0</td>
+<td>-3</td>
+<td>1.0</td>
+</tr>
+<tr>
+<td>0.125对齐指数位</td>
+<td>0</td>
+<td>-1</td>
+<td>0.01</td>
+</tr>
+<tr>
+<td>0.5 + 0.125</td>
+<td>0</td>
+<td>-1</td>
+<td>1.01</td>
+</tr>
+</tbody></table>
+<p>结果就是 (-1)^0 * 1.25 * 2^-1 = 0.625;</p>
+<p>ps： 为啥是1.25？虽然我们计算得出的是1.01 但是不要忘记计算是通过2进制算的，计算十进制的时候要转回来哦，所以0100000…. 后面都是0不用管，小数部分，从头开始乘以2的-N次别忘了，所以结果就是2^-2 = 0.25 加上整数位的1 就是1.25了~</p>
+<p>可以发现，其实浮点数的计算过程，通过一个加法器也是可以实现的，电路成本同样不会很高，但是需要注意一些别的问题：</p>
+<p>计算过程中，需要先对齐，但是有效数位的长度是23位，假如有一个很大的数字和一个很小的数字进行相加，然后对齐的过程中，小数被0部位过程中直接溢出了，23位不够用了，就会出现问题，补完后一些有效位被丢掉了，从而导致结果上的误差，两个数的指数位差超过23，比如到2^24位(差不多1600万倍)，这2个数相加后，结果就直接是较大数，较小数完全被抛弃了。。。</p>
+<p>有些同学会急急忙忙去chrome的控制输入下面的代码：</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Math</span>.pow(<span class="number">2</span>, <span class="number">24</span>) + <span class="number">0.1</span> <span class="comment">// 16777216.1</span></span><br></pre></td></tr></table></figure>
+
+<p>骗人，结果不是还有0.1吗，别急，小伙伴，js内置的Number是64位的，你可以试试</p>
+<figure class="highlight js"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Math</span>.pow(<span class="number">2</span>, <span class="number">50</span>) + <span class="number">0.1</span> <span class="comment">// 1125899906842624</span></span><br></pre></td></tr></table></figure>
+
+<p>是不是小数没了？【这种现象也叫大数吃小数】</p>
+<p>所以如果银行采用IEEE-754 32位的浮点数计数方法来保管存款的话，假设你是一个大老板，你的账户中有2000万rmb，这个时候你的某一个员工给你打了1块钱，哈哈对不起，银行给算丢了，你的存款是不变的！所以，一般银行啊，电商一类的都会在涉及到钱的时候使用定点数或者整数来计算，避免出现精读丢失的问题，如果你去银行涉及数据库，一定要小心谨慎~</p>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这篇文章我们从浮点数的表示开始，到存储，到转换以及计算过程分析了真实的计算机世界中浮点数到底是怎么运行的，从中也了解了浮点数究竟为何会丢失精度：</p>
+<ol>
+<li>浮点数在存储的时候可能出现不能准确转化为对应2进制的情况</li>
+<li>在计算过程中，又存在大数吃小数的可能，也会导致数据不准确</li>
+</ol>
+<h3 id="延伸"><a href="#延伸" class="headerlink" title="延伸"></a>延伸</h3><p>精度丢失不是没法解决的，有成熟的方案，不做过多介绍，有兴趣大家可以去研究：</p>
+<p><a href="https://blog.csdn.net/zhangpinghao/article/details/8197600" target="_blank" rel="noopener">Summation Formula 算法</a></p>
+<h3 id="说明："><a href="#说明：" class="headerlink" title="说明："></a>说明：</h3><p>文章内容大部分参考自 徐文浩 老师的 「深入浅出计算机组成原理」专栏，加了一些自己的理解做了一个简单的总结，有兴趣的同学可以去极客时间购买学习，我之后也会不定时的分享一些自己的所得~</p>
+<p>ps： 有同学可能会问，既然只有0.5可以转为一个准确的数字，为何0.1+0.1没有问题，这个我还没仔细研究，不过我猜想是因为本身计算就是一个计算近似值的过程，因此再得出结果后，如果还在一个近似范围内，就会认为没有误差，超过这个范围，则会认为出现误差了，总之我们可以确认的是计算过程中拿到的确实是一个近似数了</p>
+<p>有兴趣的话可以到<a href="https://www.h-schmidt.net/FloatConverter/IEEE754.html" target="_blank" rel="noopener">这里</a>查看实际的数字在计算机中存储的具体内容~</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>坚持原创技术分享，您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>Donate</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="Guokai WeChat Pay">
+        <p>WeChat Pay</p>
+      </div>
+    
+
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/计算机基础/" rel="tag"># 计算机基础</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/07/16/探索基础的二进制世界(1)/" rel="next" title="探索二进制的世界(1)">
+                <i class="fa fa-chevron-left"></i> 探索二进制的世界(1)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image" src="/images/avatar.jpeg" alt="Guokai">
+          <p class="site-author-name" itemprop="name">Guokai</p>
+           
+              <p class="site-description motion-element" itemprop="description">个人博客</p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#序言"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#缘起"><span class="nav-number">2.</span> <span class="nav-text">缘起</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#真的有“定点数”"><span class="nav-number">3.</span> <span class="nav-text">真的有“定点数”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#“定点数”存在哪些问题"><span class="nav-number">4.</span> <span class="nav-text">“定点数”存在哪些问题</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点数是如何表示的"><span class="nav-number">5.</span> <span class="nav-text">浮点数是如何表示的</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#浮点数-amp-二进制"><span class="nav-number">6.</span> <span class="nav-text">浮点数&amp;二进制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#小心你的“存款”"><span class="nav-number">7.</span> <span class="nav-text">小心你的“存款”</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#总结"><span class="nav-number">8.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#延伸"><span class="nav-number">9.</span> <span class="nav-text">延伸</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#说明："><span class="nav-number">10.</span> <span class="nav-text">说明：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Guokai</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
